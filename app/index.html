@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Bespiral Network Simulator</title>
+</head>
+
+
+<title>BookLib</title>
+<div id="main"></div>
+<script src="NetworkSimulator.js"></script>
+<script>
+    var root = document.getElementById('main');
+    var app = Elm.NetworkSimulator.init({node: root, flags:  {
+       width:  window.innerWidth,
+       height: window.innerHeight,
+     }
+   });
+
+   app.ports.sendMessage.subscribe(msg => handleMessage(msg))
+
+   var handleMessage = function(msg) {
+
+     switch(msg) {
+
+        case "chirp":
+             console.log("Chirp")
+             var audio = new Audio('audio/chirp1.wav');
+             audio.play();
+             break;
+
+        case "longChirp":
+             console.log("Long Chirp")
+             var audio = new Audio('audio/chirp2.wav');
+             audio.play();
+             break;
+
+        case "veryLongChirp":
+            console.log("Very Long Chirp")
+            var audio = new Audio('audio/ending.wav');
+            audio.play();
+            break;
+
+        case "coo":
+             console.log("Coo")
+             var audio = new Audio('audio/lowRise.wav');
+             audio.play();
+             break;
+        }
+
+     }
+
+
+</script>
+</body>
