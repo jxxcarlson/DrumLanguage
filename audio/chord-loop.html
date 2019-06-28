@@ -18,12 +18,12 @@
   const synth = new Tone.MembraneSynth().toMaster();
 
   // create an array of notes to be played
-  const notes = ["C3", "Eb3", "G3", "Bb3"];
+  const notes = ["C2", "C3", "Eb3", "G3", "Bb3"];
 
   // create a new sequence with the synth and notes
   const synthPart = new Tone.Sequence(
     function(time, note) {
-      synth.triggerAttackRelease(note, "10hz", time);
+      synth.triggerAttackRelease(note, "80hz", time);
     },
     notes,
     "4n"
@@ -31,6 +31,8 @@
 
   // Setup the synth to be ready to play on beat 1
   synthPart.start();
+
+
 
   // Note that if you pass a time into the start method
   // you can specify when the synth part starts
@@ -61,8 +63,10 @@ document.querySelectorAll("#start-button").forEach(function(button){
 
             //play the note on mouse down
             console.log("Mouse down on Start")
-
+            Tone.Transport.bpm.value = 160
+            Tone.Transport.loop = false
             Tone.Transport.start();
+            Tone.Transport.loop = false
 
      })})
 
@@ -74,6 +78,8 @@ document.querySelectorAll("#stop-button").forEach(function(button){
             console.log("Mouse down on Stop")
 
             Tone.Transport.stop();
+
+
 
       })})
 </script>

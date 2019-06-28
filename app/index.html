@@ -1,58 +1,94 @@
-
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>Bespiral Network Simulator</title>
+<head>
+  <meta charset="UTF-8">
+  <title>Drum App</title>
+  <script src="Main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/13.0.1/Tone.min.js" ></script>
 </head>
 
+<body>
+  <div id="elm"></div>
+  <script>
+      var app = Elm.Main.init({
+        node: document.getElementById('elm')
+      });
 
-<title>BookLib</title>
-<div id="main"></div>
-<script src="NetworkSimulator.js"></script>
-<script>
-    var root = document.getElementById('main');
-    var app = Elm.NetworkSimulator.init({node: root, flags:  {
-       width:  window.innerWidth,
-       height: window.innerHeight,
-     }
-   });
+      const synth = new Tone.MembraneSynth().toMaster();
 
-   app.ports.sendMessage.subscribe(msg => handleMessage(msg))
+      app.ports.sendNotes.subscribe(function(notes) {
+        console.log(notes)
 
-   var handleMessage = function(msg) {
-
-     switch(msg) {
-
-        case "chirp":
-             console.log("Chirp")
-             var audio = new Audio('audio/chirp1.wav');
-             audio.play();
-             break;
-
-        case "longChirp":
-             console.log("Long Chirp")
-             var audio = new Audio('audio/chirp2.wav');
-             audio.play();
-             break;
-
-        case "veryLongChirp":
-            console.log("Very Long Chirp")
-            var audio = new Audio('audio/ending.wav');
-            audio.play();
-            break;
-
-        case "coo":
-             console.log("Coo")
-             var audio = new Audio('audio/lowRise.wav');
-             audio.play();
-             break;
+        var makeRest = function(str) {
+            if (str == "Rest") {
+              return null
+            } else {
+              return str
+            }
         }
+        const synthPart = new Tone.Sequence(
+          function(time, note) {
+            synth.triggerAttackRelease(note, "20hz", time);
+          },
+          notes.map(makeRest),
+          // ["C3", "Eb3", null, null, null, "G3", "Bb3"],
+          "4n"
+        );
 
-     }
+        // Setup the synth to be ready to play on beat 1
+        synthPart.start();
+
+        Tone.Transport.loopEnd = '1m'
+        Tone.Transport.loop = false
+        Tone.Transport.bpm.value = 320
+        Tone.Transport.start();
+        Tone.Transport.loop = false
+      });
+
+      app.ports.sendCommand.subscribe(function(command) {
+          if (command == "stop") {
+            Tone.Transport.stop();
+          }
+        });
+
+  </script>
+
+  <script>
+    //create a synth and connect it to the master output (your speakers)
+    // create a synth
+    //  const synth = new Tone.MembraneSynth().toMaster();
 
 
-</script>
+
+    // create an array of notes to be played
+    // const notes = ["C3", "Eb3", "G3", "Bb3"];
+
+    // create a new sequence with the synth and notes
+    // const synthPart = new Tone.Sequence(
+    //   function(time, note) {
+    //     synth.triggerAttackRelease(note, "20hz", time);
+    //   },
+    //   notes,
+    //   "4n"
+    // );
+    //
+    // // Setup the synth to be ready to play on beat 1
+    // synthPart.start();
+
+
+
+    // Note that if you pass a time into the start method
+    // you can specify when the synth part starts
+    // e.g. .start('8n') will start after 1 eighth note
+
+    // start the transport which controls the main timeline
+
+
+
+    // Tone.Transport.start();
+
+  //  document.querySelector('button').addEventListener('click', () => Tone.start())
+
+  </script>
 </body>
+</html>

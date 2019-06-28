@@ -1,1 +1,1 @@
-elm make DrumApp.elm
+elm make Main.elm  --output=Main.js
