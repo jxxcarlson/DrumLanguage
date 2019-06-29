@@ -1,13 +1,11 @@
 module Phoneme exposing
     ( PhonemeClass(..)
-    , Pitch(..)
-    , PitchClass(..)
-    , multiplyRests
     , phonemeClassOfString
     , pitchOfPhonemeClass1
     , stringOfPhonemeClass
-    , stringOfPitch
     )
+
+import Pitch exposing (Pitch(..), PitchClass(..))
 
 
 type PhonemeClass
@@ -22,96 +20,6 @@ type PhonemeClass
     | Silence
     | Punctuation
     | Unknown
-
-
-type PitchClass
-    = C
-    | Cs
-    | Db
-    | D
-    | Ds
-    | Eb
-    | E
-    | F
-    | Fs
-    | Gb
-    | G
-    | Gs
-    | Ab
-    | A
-    | As
-    | Bb
-    | B
-
-
-type Pitch
-    = Pitch PitchClass Int
-    | Rest
-
-
-stringOfPitch : Pitch -> String
-stringOfPitch pitch =
-    case pitch of
-        Pitch pitchClass octave ->
-            stringOfPitchClass pitchClass ++ String.fromInt octave
-
-        Rest ->
-            "Rest"
-
-
-stringOfPitchClass : PitchClass -> String
-stringOfPitchClass pitchClass =
-    case pitchClass of
-        C ->
-            "C"
-
-        Cs ->
-            "C#"
-
-        Db ->
-            "Db"
-
-        D ->
-            "D"
-
-        Ds ->
-            "D#"
-
-        Eb ->
-            "Eb"
-
-        E ->
-            "E"
-
-        F ->
-            "F"
-
-        Fs ->
-            "F#"
-
-        Gb ->
-            "Gb"
-
-        G ->
-            "G"
-
-        Gs ->
-            "Gs"
-
-        Ab ->
-            "Ab"
-
-        A ->
-            "A"
-
-        As ->
-            "A#"
-
-        Bb ->
-            "Bb"
-
-        B ->
-            "B"
 
 
 pitchOfPhonemeClass1 : PhonemeClass -> Pitch
@@ -261,17 +169,3 @@ phonemeClassOfString str =
 
     else
         Unknown
-
-
-multiplyRests : Int -> List Pitch -> List Pitch
-multiplyRests k pitchList =
-    pitchList
-        |> List.map
-            (\x ->
-                if x == Rest then
-                    List.repeat k Rest
-
-                else
-                    [ x ]
-            )
-        |> List.concat

@@ -17,12 +17,15 @@ import Json.Encode as E
 import Phoneme
     exposing
         ( PhonemeClass(..)
-        , Pitch(..)
-        , PitchClass(..)
-        , multiplyRests
         , phonemeClassOfString
         , pitchOfPhonemeClass1
         , stringOfPhonemeClass
+        )
+import Pitch
+    exposing
+        ( Pitch(..)
+        , PitchClass(..)
+        , multiplyRests
         , stringOfPitch
         )
 
