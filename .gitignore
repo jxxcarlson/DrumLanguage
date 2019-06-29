@@ -1,0 +1,6 @@
+app/elm-stuff/
+elm-stuff
+plock.json
+audio/
+package-lock.json
+app/Drum.js

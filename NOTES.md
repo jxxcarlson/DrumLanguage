@@ -24,3 +24,7 @@ https://medium.com/@soffritti.pierfrancesco/sound-generation-with-javascript-57b
 ## Drum Languages
 
 [From Natural Language to Drum Languagw](http://oicrm.org/wp-content/uploads/2016/08/Article-F.Cloarec-Heiss.pdf)
+
+## Phoneme Analysis
+
+[CMU pronouncing dictionary](http://www.speech.cs.cmu.edu/cgi-bin/cmudict?in=apple&stress=-s)

@@ -1,1 +1,1 @@
-elm make Main.elm  --output=Main.js
+elm make --optimize Drum.elm  --output=Drum.js
