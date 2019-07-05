@@ -42,16 +42,23 @@ main =
 type alias Model =
     { input : String
     , output : String
-    , numberOfRestsString : String
+    , bpmString : String
     }
+
+
+
+--
+-- MSG
+--
 
 
 type Msg
     = NoOp
     | InputText String
-    | InputNumberOfRests String
+    | InputBPM String
     | Play
     | Stop
+    | Tempo Int
 
 
 type alias Flags =
@@ -68,7 +75,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { input = initialText
       , output = ""
-      , numberOfRestsString = "1"
+      , bpmString = "320"
       }
     , Cmd.none
     )
@@ -98,14 +105,11 @@ update msg model =
         InputText str ->
             ( { model | input = str }, Cmd.none )
 
-        InputNumberOfRests str ->
-            ( { model | numberOfRestsString = str }, Cmd.none )
+        InputBPM str ->
+            ( { model | bpmString = str }, Cmd.none )
 
         Play ->
             let
-                k =
-                    String.toInt model.numberOfRestsString |> Maybe.withDefault 1
-
                 pitchOfPhonemeClass =
                     pitchOfPhonemeClass2
 
@@ -114,7 +118,6 @@ update msg model =
                         |> String.toLower
                         |> String.split ""
                         |> List.map (phonemeClassOfString >> pitchOfPhonemeClass)
-                        |> multiplyRests k
                         |> List.map stringOfPitch
             in
             ( { model
@@ -124,7 +127,10 @@ update msg model =
             )
 
         Stop ->
-            ( model, sendCommand "stop" )
+            ( model, sendCommand "stop:now" )
+
+        Tempo bpm ->
+            ( model, sendCommand <| "tempo:" ++ String.fromInt bpm )
 
 
 
@@ -135,7 +141,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [] (mainColumn model)
+    Element.layout [ Background.color (rgb255 40 40 40) ] (mainColumn model)
 
 
 mainColumn : Model -> Element Msg
@@ -172,13 +178,13 @@ inputText model =
         }
 
 
-inputNumberOfRests : Model -> Element Msg
-inputNumberOfRests model =
+inputBPM : Model -> Element Msg
+inputBPM model =
     Input.text [ width (px 60) ]
-        { onChange = InputNumberOfRests
-        , text = model.numberOfRestsString
+        { onChange = InputBPM
+        , text = model.bpmString
         , placeholder = Nothing
-        , label = Input.labelLeft [] <| el [ moveDown 13, paddingXY 4 0 ] (text "Rests")
+        , label = Input.labelLeft [] <| el [ moveDown 13, paddingXY 4 0 ] (text "BPM")
         }
 
 
@@ -193,7 +199,7 @@ appButtons model =
             { onPress = Just Stop
             , label = el [ centerX, centerY ] (text "Stop")
             }
-        , inputNumberOfRests model
+        , inputBPM model
         ]
 
 

@@ -28,12 +28,23 @@
         }
         const synthPart = new Tone.Sequence(
           function(time, note) {
-            synth.triggerAttackRelease(note, "20hz", time);
+            synth.triggerAttackRelease(note, "60hz", time);
           },
           notes.map(makeRest),
           // ["C3", "Eb3", null, null, null, "G3", "Bb3"],
           "4n"
         );
+
+        app.ports.sendCommand.subscribe(function(command) {
+          console.log(command)
+
+          var args = command.split(":")
+
+          if (args[0] == "tempo") {
+             console.log("tempo = " + args[1] + " bpm")
+          }
+
+        })
 
         // Setup the synth to be ready to play on beat 1
         synthPart.start();
