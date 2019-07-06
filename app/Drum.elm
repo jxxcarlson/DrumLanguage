@@ -58,7 +58,11 @@ type Msg
     | InputBPM String
     | Play
     | Stop
-    | Tempo Int
+      --| Tempo Int
+    | SetTempo
+    | Instructions
+    | Sample1
+    | Sample2
 
 
 type alias Flags =
@@ -84,12 +88,25 @@ init flags =
 initialText =
     String.replace "\n"
         " "
-        """Write something here, e.g.,
-Twas brillig, and the slithey toves
-did gyre and gimble in the wabe.
-All mimsy were the borogroves,
-And the mome wraths outgrabe.
+        """This app turns text into a kind of
+techno-music by imitating the princples of African
+drum languages.  Things to try: (1) put text in
+this box and press "Play".  (2) Alter the tempo
+(beats per minute). (3) Try patterns, e.g.,
+"Wawachaachaadadadada,,"  Here spaces and commas both give
+one beat rests. (4) It is fun to experiment
+with patterns like palindromes:
+What is si tahW is si sii sii,,,,
+or just like this: dtaattddttaa,
 """
+
+
+sample1Text =
+    "What is si tahW is si sii sii,,,, or just like this: dtaattddttaa,"
+
+
+sample2Text =
+    "MississipiipississiM,Wawachaachaadadadada,,"
 
 
 subscriptions model =
@@ -102,11 +119,23 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        Instructions ->
+            ( { model | input = initialText }, Cmd.none )
+
+        Sample1 ->
+            ( { model | input = sample1Text }, Cmd.none )
+
+        Sample2 ->
+            ( { model | input = sample2Text }, Cmd.none )
+
         InputText str ->
             ( { model | input = str }, Cmd.none )
 
         InputBPM str ->
             ( { model | bpmString = str }, Cmd.none )
+
+        SetTempo ->
+            ( model, sendCommand <| "tempo:" ++ model.bpmString )
 
         Play ->
             let
@@ -114,26 +143,29 @@ update msg model =
                     pitchOfPhonemeClass2
 
                 noteList =
-                    (model.input ++ "        ")
+                    model.input
                         |> String.toLower
                         |> String.split ""
-                        |> List.map (phonemeClassOfString >> pitchOfPhonemeClass)
+                        |> List.map phonemeClassOfString
+                        |> List.filter (\s -> s /= Unknown)
+                        |> List.map pitchOfPhonemeClass
                         |> List.map stringOfPitch
             in
             ( { model
                 | output = noteList |> List.take 30 |> String.join " "
               }
-            , sendNotes noteList
+            , Cmd.batch [ sendCommand <| "tempo:" ++ model.bpmString, sendNotes noteList ]
             )
 
         Stop ->
             ( model, sendCommand "stop:now" )
 
-        Tempo bpm ->
-            ( model, sendCommand <| "tempo:" ++ String.fromInt bpm )
 
 
-
+--
+-- Tempo bpm ->
+--     ( model, sendCommand <| "tempo:" ++ String.fromInt bpm )
+--
 --
 -- VIEW
 --
@@ -148,7 +180,7 @@ mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
         [ column [ centerX, spacing 20 ]
-            [ title "Drum Language App"
+            [ title "Techno Drum Language App"
             , inputText model
             , outputDisplay model
             , appButtons model
@@ -169,7 +201,7 @@ outputDisplay model =
 
 inputText : Model -> Element Msg
 inputText model =
-    Input.multiline [ width (px 600), height (px 200) ]
+    Input.multiline [ width (px 700), height (px 200) ]
         { onChange = InputText
         , text = model.input
         , placeholder = Nothing
@@ -191,7 +223,10 @@ inputBPM model =
 appButtons : Model -> Element Msg
 appButtons model =
     row [ centerX, spacing 20 ]
-        [ Input.button buttonStyle
+        [ instructionsButton
+        , sampleButton1
+        , sampleButton2
+        , Input.button buttonStyle
             { onPress = Just Play
             , label = el [ centerX, centerY ] (text "Play")
             }
@@ -201,6 +236,34 @@ appButtons model =
             }
         , inputBPM model
         ]
+
+
+instructionsButton =
+    Input.button buttonStyle
+        { onPress = Just Instructions
+        , label = el [ centerX, centerY ] (text "Instructions")
+        }
+
+
+sampleButton1 =
+    Input.button buttonStyle
+        { onPress = Just Sample1
+        , label = el [ centerX, centerY ] (text "Sample 1")
+        }
+
+
+sampleButton2 =
+    Input.button buttonStyle
+        { onPress = Just Sample2
+        , label = el [ centerX, centerY ] (text "Sample 2")
+        }
+
+
+tempoButton =
+    Input.button buttonStyle
+        { onPress = Just SetTempo
+        , label = el [ centerX, centerY ] (text "Set tempo")
+        }
 
 
 
@@ -213,7 +276,7 @@ mainColumnStyle =
     [ centerX
     , centerY
     , Background.color (rgb255 240 240 240)
-    , width (px 700)
+    , width (px 800)
     , paddingXY 20 20
     ]
 
@@ -221,6 +284,7 @@ mainColumnStyle =
 buttonStyle =
     [ Background.color (rgb255 40 40 40)
     , Font.color (rgb255 255 255 255)
+    , Font.size 16
     , paddingXY 15 8
     ]
 

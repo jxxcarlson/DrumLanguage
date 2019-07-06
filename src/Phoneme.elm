@@ -132,7 +132,7 @@ xs =
 
 
 punctuationSymbols =
-    [ ".", ",", "!", "?" ]
+    [ ".", "!", "?" ]
 
 
 phonemeClassOfString : String -> PhonemeClass
@@ -164,7 +164,7 @@ phonemeClassOfString str =
     else if List.member str punctuationSymbols then
         Punctuation
 
-    else if str == " " then
+    else if str == " " || str == "," then
         Silence
 
     else

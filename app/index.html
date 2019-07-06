@@ -14,10 +14,12 @@
         node: document.getElementById('elm')
       });
 
+      var bpm = 320
+
       const synth = new Tone.MembraneSynth().toMaster();
 
       app.ports.sendNotes.subscribe(function(notes) {
-        console.log(notes)
+        console.log("RECEIVED: " + notes)
 
         var makeRest = function(str) {
             if (str == "Rest") {
@@ -35,32 +37,30 @@
           "4n"
         );
 
-        app.ports.sendCommand.subscribe(function(command) {
-          console.log(command)
-
-          var args = command.split(":")
-
-          if (args[0] == "tempo") {
-             console.log("tempo = " + args[1] + " bpm")
-          }
-
-        })
-
         // Setup the synth to be ready to play on beat 1
         synthPart.start();
 
         Tone.Transport.loopEnd = '1m'
         Tone.Transport.loop = false
-        Tone.Transport.bpm.value = 320
+        Tone.Transport.bpm.value = bpm
         Tone.Transport.start();
         Tone.Transport.loop = false
       });
 
       app.ports.sendCommand.subscribe(function(command) {
-          if (command == "stop") {
-            Tone.Transport.stop();
-          }
-        });
+
+        var args = command.split(":")
+
+        console.log("ARGS: " + args)
+
+        if (args[0] == "tempo") {
+           console.log("tempo = " + args[1] + " bpm")
+           bpm = parseInt(args[1])
+        } else if (args[0] == "stop") {
+          Tone.Transport.stop();
+        }
+
+      })
 
   </script>
 
