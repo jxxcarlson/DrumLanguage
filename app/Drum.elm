@@ -14,6 +14,7 @@ import Element.Input as Input
 import Html exposing (Html)
 import Http
 import Json.Encode as E
+import Melody
 import Phoneme
     exposing
         ( PhonemeClass(..)
@@ -139,17 +140,8 @@ update msg model =
 
         Play ->
             let
-                pitchOfPhonemeClass =
-                    pitchOfPhonemeClass2
-
                 noteList =
-                    model.input
-                        |> String.toLower
-                        |> String.split ""
-                        |> List.map phonemeClassOfString
-                        |> List.filter (\s -> s /= Unknown)
-                        |> List.map pitchOfPhonemeClass
-                        |> List.map stringOfPitch
+                    Melody.fromString model.input
             in
             ( { model
                 | output = noteList |> List.take 30 |> String.join " "
@@ -287,71 +279,3 @@ buttonStyle =
     , Font.size 16
     , paddingXY 15 8
     ]
-
-
-pitchOfPhonemeClass3 : PhonemeClass -> Pitch
-pitchOfPhonemeClass3 pc =
-    case pc of
-        Vowel ->
-            Pitch C 3
-
-        Nasal ->
-            Pitch E 3
-
-        VoicedFricative ->
-            Pitch F 3
-
-        Fricative ->
-            Pitch G 3
-
-        VoicedPlosive ->
-            Pitch Bb 3
-
-        Plosive ->
-            Pitch C 4
-
-        Approximant ->
-            Pitch D 4
-
-        Silence ->
-            Rest
-
-        Punctuation ->
-            Pitch C 2
-
-        _ ->
-            Pitch G 4
-
-
-pitchOfPhonemeClass2 : PhonemeClass -> Pitch
-pitchOfPhonemeClass2 pc =
-    case pc of
-        Vowel ->
-            Pitch G 2
-
-        Approximant ->
-            Pitch C 3
-
-        Nasal ->
-            Pitch E 3
-
-        VoicedFricative ->
-            Pitch F 3
-
-        Fricative ->
-            Pitch G 3
-
-        VoicedPlosive ->
-            Pitch Bb 3
-
-        Plosive ->
-            Pitch D 4
-
-        Silence ->
-            Rest
-
-        Punctuation ->
-            Pitch C 2
-
-        _ ->
-            Pitch G 1
