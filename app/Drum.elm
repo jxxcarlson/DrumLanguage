@@ -91,7 +91,7 @@ repetition, etc.
 
 initialTextVoice2 =
     """Note that there are two voices.  The first (above) is playing
-in quater notes, while the second (here) is playing in eight notes.
+in quarter notes, while the second (here) is playing in eight notes.
 """
 
 
@@ -208,6 +208,10 @@ mainColumn model =
             , readVoice1 model
             , readVoice2 model
             , appButtons model
+            , newTabLink [ centerX, Font.size 12 ]
+                { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
+                , label = el [ Font.size 14, Font.color <| Element.rgb 0 0 1 ] (text "Article")
+                }
             ]
         ]
 
