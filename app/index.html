@@ -18,7 +18,7 @@
 
       const synth = new Tone.MembraneSynth().toMaster();
 
-      app.ports.sendNotes.subscribe(function(notes) {
+      app.ports.sendMusic.subscribe(function(notes) {
         console.log("RECEIVED: " + notes)
 
         var makeRest = function(str) {
@@ -35,7 +35,7 @@
           notes.map(makeRest),
           // ["C3", "Eb3", null, null, null, "G3", "Bb3"],
           "4n"
-        );
+        ); // end: app.ports.sendMusic.subscribe(function(notes)
 
         // Setup the synth to be ready to play on beat 1
         synthPart.start();
@@ -59,6 +59,15 @@
         } else if (args[0] == "stop") {
           Tone.Transport.stop();
         }
+
+      })
+
+      app.ports.sendPiece.subscribe(function(value) {
+
+        // var obj = JSON.parse(value)
+
+        console.log (JSON.stringify(value))
+
 
       })
 

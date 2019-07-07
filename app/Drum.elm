@@ -13,8 +13,9 @@ import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Http
-import Json.Encode as E
+import Json.Encode as Encode
 import Melody
+import Player
 
 
 main =
@@ -59,7 +60,10 @@ type alias Flags =
     {}
 
 
-port sendNotes : List String -> Cmd msg
+port sendMusic : List String -> Cmd msg
+
+
+port sendPiece : Encode.Value -> Cmd msg
 
 
 port sendCommand : String -> Cmd msg
@@ -134,13 +138,30 @@ update msg model =
 
         Play ->
             let
-                noteList =
+                noteList1 =
                     Melody.fromString model.voice1String
+
+                noteList2 =
+                    Melody.fromString model.voice2String
+
+                part1 =
+                    Player.partFromMelody "4n" "0.9" noteList1
+
+                part2 =
+                    Player.partFromMelody "4n" "0.9" noteList2
+
+                piece =
+                    [ part1, part2 ]
             in
             ( { model
-                | notesForVoice1 = noteList |> List.take 30 |> String.join " "
+                | notesForVoice1 = noteList1 |> List.take 30 |> String.join " "
+                , notesForVoice2 = noteList2 |> List.take 30 |> String.join " "
               }
-            , Cmd.batch [ sendCommand <| "tempo:" ++ model.bpmString, sendNotes noteList ]
+            , Cmd.batch
+                [ sendCommand <| "tempo:" ++ model.bpmString
+                , sendMusic noteList1
+                , sendPiece <| Player.encodePiece piece
+                ]
             )
 
         Stop ->
@@ -169,7 +190,6 @@ mainColumn model =
             [ title "Techno Drum Language App"
             , readVoice1 model
             , readVoice2 model
-            , outputDisplay model
             , appButtons model
             ]
         ]
@@ -180,10 +200,10 @@ title str =
     row [ centerX, Font.bold, Font.size 24 ] [ text str ]
 
 
-outputDisplay : Model -> Element msg
-outputDisplay model =
+displayVoice : String -> Element msg
+displayVoice notes =
     row [ centerX, Font.size 11 ]
-        [ text model.notesForVoice1 ]
+        [ text notes ]
 
 
 readVoice1 : Model -> Element Msg
@@ -197,6 +217,7 @@ readVoice1 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
+        , displayVoice model.notesForVoice1
         ]
 
 
@@ -211,6 +232,7 @@ readVoice2 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
+        , displayVoice model.notesForVoice2
         ]
 
 
