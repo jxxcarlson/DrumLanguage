@@ -168,6 +168,7 @@ mainColumn model =
         [ column [ centerX, spacing 20 ]
             [ title "Techno Drum Language App"
             , readVoice1 model
+            , readVoice2 model
             , outputDisplay model
             , appButtons model
             ]
@@ -187,13 +188,30 @@ outputDisplay model =
 
 readVoice1 : Model -> Element Msg
 readVoice1 model =
-    Input.multiline [ width (px 700), height (px 200) ]
-        { onChange = ReadVoice1
-        , text = model.voice1String
-        , placeholder = Nothing
-        , label = Input.labelLeft [] <| el [] (text "")
-        , spellcheck = False
-        }
+    column [ spacing 8 ]
+        [ el [ Font.bold, Font.size 14 ] (text <| "Voice 1")
+        , Input.multiline [ width (px 700), height (px 200) ]
+            { onChange = ReadVoice1
+            , text = model.voice1String
+            , placeholder = Nothing
+            , label = Input.labelLeft [] <| el [] (text "")
+            , spellcheck = False
+            }
+        ]
+
+
+readVoice2 : Model -> Element Msg
+readVoice2 model =
+    column [ spacing 8 ]
+        [ el [ Font.bold, Font.size 14 ] (text <| "Voice 2")
+        , Input.multiline [ width (px 700), height (px 200) ]
+            { onChange = ReadVoice2
+            , text = model.voice2String
+            , placeholder = Nothing
+            , label = Input.labelLeft [] <| el [] (text "")
+            , spellcheck = False
+            }
+        ]
 
 
 inputBPM : Model -> Element Msg
