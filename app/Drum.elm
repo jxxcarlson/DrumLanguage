@@ -15,20 +15,6 @@ import Html exposing (Html)
 import Http
 import Json.Encode as E
 import Melody
-import Phoneme
-    exposing
-        ( PhonemeClass(..)
-        , phonemeClassOfString
-        , pitchOfPhonemeClass1
-        , stringOfPhonemeClass
-        )
-import Pitch
-    exposing
-        ( Pitch(..)
-        , PitchClass(..)
-        , multiplyRests
-        , stringOfPitch
-        )
 
 
 main =
