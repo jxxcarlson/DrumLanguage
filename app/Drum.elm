@@ -94,6 +94,10 @@ or just like this: dtaattddttaa,
 """
 
 
+
+-- Wawachaachaadadadada,,tawwat isiwa
+
+
 sample1Text =
     "What is si tahW is si sii sii,,,, or just like this: dtaattddttaa,"
 

@@ -20,8 +20,6 @@
 
       app.ports.sendPiece.subscribe(function(piece) {
 
-        console.log (JSON.stringify(piece))
-
         var makeRest = function(str) {
             if (str == "Rest") {
               return null
@@ -38,8 +36,17 @@
           "4n"
         ); // end: app.ports.sendMusic.subscribe(function(notes)
 
+        const synthPart2 = new Tone.Sequence(
+          function(time, note) {
+            synth.triggerAttackRelease(note, "60hz", time);
+          },
+          piece.parts[1].melody.map(makeRest),
+          // ["C3", "Eb3", null, null, null, "G3", "Bb3"],
+          "4n"
+        );
         // Setup the synth to be ready to play on beat 1
         synthPart.start();
+        synthPart2.start();
 
         Tone.Transport.loopEnd = '1m'
         Tone.Transport.loop = false
