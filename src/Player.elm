@@ -1,4 +1,4 @@
-module Player exposing (Part, Piece, encodePiece, partFromMelody)
+module Player exposing (Part, Piece, emptyPiece, encodePiece, partFromMelody)
 
 import Json.Encode as Encode
 
@@ -41,3 +41,7 @@ type alias Part =
 
 type alias Piece =
     { bpm : Int, parts : List Part }
+
+
+emptyPiece =
+    Piece 0 []

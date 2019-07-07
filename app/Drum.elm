@@ -68,8 +68,8 @@ port sendCommand : String -> Cmd msg
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { voice1String = initialText
-      , voice2String = ""
+    ( { voice1String = initialTextVoice1
+      , voice2String = initialTextVoice2
       , notesForVoice1 = ""
       , notesForVoice2 = ""
       , bpmString = "160"
@@ -78,19 +78,20 @@ init flags =
     )
 
 
-initialText =
-    String.replace "\n"
-        " "
-        """This app turns text into a kind of
-techno-music by imitating the princples of African
-drum languages.  Things to try: (1) put text in
-this box and press "Play".  (2) Alter the tempo
-(beats per minute). (3) Try patterns, e.g.,
-"Wawachaachaadadadada,,"  Here spaces and commas both give
-one beat rests. (4) It is fun to experiment
-with patterns like palindromes:
-What is si tahW is si sii sii,,,,
-or just like this: dtaattddttaa,
+initialTextVoice1 =
+    """This app turns text into a kind of techno-music by imitating
+the princples of African drum languages.  Things to try: (1) put text
+in this box and press "Play".  (2) Alter the tempo (beats per minute).
+(3) Try patterns, e.g., "Wawachaachaadadadada,,"  Here spaces and
+commas both give one beat rests. (4) It is fun to experiment with
+patterns like palindromes: What is si tahW is si sii sii,,,,
+repetition, etc.
+"""
+
+
+initialTextVoice2 =
+    """Note that there are two voices.  The first (above) is playing
+in quater notes, while the second (here) is playing in eight notes.
 """
 
 
@@ -98,12 +99,20 @@ or just like this: dtaattddttaa,
 -- Wawachaachaadadadada,,tawwat isiwa
 
 
-sample1Text =
-    "What is si tahW is si sii sii,,,, or just like this: dtaattddttaa,"
+sample1TextVoice1 =
+    "What is si tahW is si sii sii,,,,"
 
 
-sample2Text =
-    "MississipiipississiM,Wawachaachaadadadada,,"
+sample1TextVoice2 =
+    "dtaattddttaa,"
+
+
+sample2TextVoice1 =
+    "MississipiipississiM"
+
+
+sample2TextVoice2 =
+    "Wawachaachaadadadada,,"
 
 
 subscriptions model =
@@ -117,13 +126,13 @@ update msg model =
             ( model, Cmd.none )
 
         Instructions ->
-            ( { model | voice1String = initialText }, Cmd.none )
+            ( { model | voice1String = initialTextVoice1, voice2String = initialTextVoice2 }, Cmd.none )
 
         Sample1 ->
-            ( { model | voice1String = sample1Text }, Cmd.none )
+            ( { model | voice1String = sample1TextVoice1, voice2String = sample1TextVoice2 }, Cmd.none )
 
         Sample2 ->
-            ( { model | voice1String = sample2Text }, Cmd.none )
+            ( { model | voice1String = sample2TextVoice1, voice2String = sample2TextVoice2 }, Cmd.none )
 
         ReadVoice1 str ->
             ( { model | voice1String = str }, Cmd.none )
@@ -167,7 +176,13 @@ update msg model =
             )
 
         Stop ->
-            ( model, sendCommand "stop:now" )
+            ( model
+            , Cmd.batch
+                [ sendCommand "stop:now"
+
+                --, sendPiece <| Player.encodePiece Player.emptyPiece
+                ]
+            )
 
 
 
@@ -204,8 +219,22 @@ title str =
 
 displayVoice : String -> Element msg
 displayVoice notes =
+    let
+        noteList =
+            Melody.fromString notes
+
+        noteLisAsString =
+            String.join " " (List.take 20 noteList)
+
+        tag =
+            if List.length noteList > 20 then
+                " ..."
+
+            else
+                ""
+    in
     row [ centerX, Font.size 11 ]
-        [ text notes ]
+        [ text <| "beats: " ++ String.fromInt (List.length noteList) ++ ", notes: " ++ noteLisAsString ++ tag ]
 
 
 readVoice1 : Model -> Element Msg
@@ -219,7 +248,7 @@ readVoice1 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice model.notesForVoice1
+        , displayVoice model.voice1String
         ]
 
 
@@ -234,7 +263,7 @@ readVoice2 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice model.notesForVoice2
+        , displayVoice model.voice2String
         ]
 
 
