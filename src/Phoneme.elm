@@ -1,11 +1,15 @@
 module Phoneme exposing
     ( PhonemeClass(..)
     , phonemeClassOfString
-    , pitchOfPhonemeClass1
+    , primitiveOfPhonemeClass1
     , stringOfPhonemeClass
+    , toPitchNameList
     )
 
-import Pitch exposing (Pitch(..), PitchClass(..))
+import Duration exposing (..)
+import Pitch exposing (Pitch, PitchClass(..))
+import Primitive exposing (..)
+import Rationals exposing (..)
 
 
 type PhonemeClass
@@ -22,38 +26,117 @@ type PhonemeClass
     | Unknown
 
 
-pitchOfPhonemeClass1 : PhonemeClass -> Pitch
-pitchOfPhonemeClass1 pc =
+toPitchNameList : String -> List String
+toPitchNameList str =
+    str
+        |> String.toLower
+        |> String.split ""
+        |> List.map phonemeClassOfString
+        |> List.filter (\s -> s /= Unknown)
+        |> List.map primitiveOfPhonemeClass1
+        |> List.map stringOfPrimitive
+
+
+pitchOfPhonemeClass : PhonemeClass -> Primitive ()
+pitchOfPhonemeClass pc =
     case pc of
         Vowel ->
-            Pitch C 3
-
-        Nasal ->
-            Pitch Eb 3
-
-        VoicedFricative ->
-            Pitch G 3
-
-        Fricative ->
-            Pitch Bb 3
-
-        VoicedPlosive ->
-            Pitch D 4
-
-        Plosive ->
-            Pitch F 4
+            P ( G, 2 ) qn ()
 
         Approximant ->
-            Pitch Ab 4
+            P ( C, 3 ) qn ()
+
+        Nasal ->
+            P ( E, 3 ) qn ()
+
+        VoicedFricative ->
+            P ( F, 3 ) qn ()
+
+        Fricative ->
+            P ( G, 3 ) qn ()
+
+        VoicedPlosive ->
+            P ( Bb, 3 ) qn ()
+
+        Plosive ->
+            P ( D, 4 ) qn ()
 
         Silence ->
-            Rest
+            Rest qn
 
         Punctuation ->
-            Pitch C 2
+            P ( C, 2 ) qn ()
 
         _ ->
-            Pitch G 1
+            P ( G, 1 ) qn ()
+
+
+primitiveOfPhonemeClass1 : PhonemeClass -> Primitive ()
+primitiveOfPhonemeClass1 pc =
+    case pc of
+        Vowel ->
+            P ( C, 3 ) qn ()
+
+        Nasal ->
+            P ( Eb, 3 ) qn ()
+
+        VoicedFricative ->
+            P ( G, 3 ) qn ()
+
+        Fricative ->
+            P ( Bb, 3 ) qn ()
+
+        VoicedPlosive ->
+            P ( D, 4 ) qn ()
+
+        Plosive ->
+            P ( F, 4 ) qn ()
+
+        Approximant ->
+            P ( Ab, 4 ) qn ()
+
+        Silence ->
+            Rest qn
+
+        Punctuation ->
+            P ( C, 2 ) qn ()
+
+        _ ->
+            P ( G, 1 ) qn ()
+
+
+pitchOfPhonemeClass3 : PhonemeClass -> Primitive ()
+pitchOfPhonemeClass3 pc =
+    case pc of
+        Vowel ->
+            P ( C, 3 ) qn ()
+
+        Nasal ->
+            P ( E, 3 ) qn ()
+
+        VoicedFricative ->
+            P ( F, 3 ) qn ()
+
+        Fricative ->
+            P ( G, 3 ) qn ()
+
+        VoicedPlosive ->
+            P ( Bb, 3 ) qn ()
+
+        Plosive ->
+            P ( C, 4 ) qn ()
+
+        Approximant ->
+            P ( D, 4 ) qn ()
+
+        Silence ->
+            Rest qn
+
+        Punctuation ->
+            P ( C, 2 ) qn ()
+
+        _ ->
+            P ( G, 4 ) qn ()
 
 
 stringOfPhonemeClass : PhonemeClass -> String

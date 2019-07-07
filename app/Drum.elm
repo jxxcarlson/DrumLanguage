@@ -14,7 +14,7 @@ import Element.Input as Input
 import Html exposing (Html)
 import Http
 import Json.Encode as Encode
-import Melody
+import Phoneme
 import Player
 
 
@@ -149,10 +149,10 @@ update msg model =
         Play ->
             let
                 noteList1 =
-                    Melody.fromString model.voice1String
+                    Phoneme.toPitchNameList model.voice1String
 
                 noteList2 =
-                    Melody.fromString model.voice2String
+                    Phoneme.toPitchNameList model.voice2String
 
                 part1 =
                     Player.partFromMelody "4n" "0.8" noteList1
@@ -225,7 +225,7 @@ displayVoice : String -> Element msg
 displayVoice notes =
     let
         noteList =
-            Melody.fromString notes
+            Phoneme.toPitchNameList notes
 
         noteLisAsString =
             String.join " " (List.take 20 noteList)

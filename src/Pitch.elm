@@ -1,7 +1,6 @@
 module Pitch exposing
-    ( Pitch(..)
+    ( Pitch
     , PitchClass(..)
-    , multiplyRests
     , stringOfPitch
     )
 
@@ -26,19 +25,17 @@ type PitchClass
     | B
 
 
-type Pitch
-    = Pitch PitchClass Int
-    | Rest
+type alias Octave =
+    Int
+
+
+type alias Pitch =
+    ( PitchClass, Octave )
 
 
 stringOfPitch : Pitch -> String
-stringOfPitch pitch =
-    case pitch of
-        Pitch pitchClass octave ->
-            stringOfPitchClass pitchClass ++ String.fromInt octave
-
-        Rest ->
-            "Rest"
+stringOfPitch ( pitchClass, octave ) =
+    stringOfPitchClass pitchClass ++ String.fromInt octave
 
 
 stringOfPitchClass : PitchClass -> String
@@ -94,17 +91,3 @@ stringOfPitchClass pitchClass =
 
         B ->
             "B"
-
-
-multiplyRests : Int -> List Pitch -> List Pitch
-multiplyRests k pitchList =
-    pitchList
-        |> List.map
-            (\x ->
-                if x == Rest then
-                    List.repeat k Rest
-
-                else
-                    [ x ]
-            )
-        |> List.concat
