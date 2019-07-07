@@ -2,6 +2,7 @@
 
 ## Tone.js
 
+[Good reference](https://www.javascripting.com/view/tone-js)
 [Tone.js](https://tonejs.github.io/)
 
 [Tone.js Medium](https://medium.com/dev-red/tutorial-lets-make-music-with-javascript-and-tone-js-f6ac39d95b8c)

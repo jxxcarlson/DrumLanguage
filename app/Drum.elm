@@ -72,7 +72,7 @@ init flags =
       , voice2String = ""
       , notesForVoice1 = ""
       , notesForVoice2 = ""
-      , bpmString = "320"
+      , bpmString = "160"
       }
     , Cmd.none
     )
@@ -146,10 +146,10 @@ update msg model =
                     Melody.fromString model.voice2String
 
                 part1 =
-                    Player.partFromMelody "4n" "0.9" noteList1
+                    Player.partFromMelody "4n" "0.8" noteList1
 
                 part2 =
-                    Player.partFromMelody "4n" "0.9" noteList2
+                    Player.partFromMelody "4n" "0.4" noteList2
 
                 piece =
                     { bpm = String.toInt model.bpmString |> Maybe.withDefault 72
