@@ -60,9 +60,6 @@ type alias Flags =
     {}
 
 
-port sendMusic : List String -> Cmd msg
-
-
 port sendPiece : Encode.Value -> Cmd msg
 
 
@@ -151,7 +148,9 @@ update msg model =
                     Player.partFromMelody "4n" "0.9" noteList2
 
                 piece =
-                    [ part1, part2 ]
+                    { bpm = String.toInt model.bpmString |> Maybe.withDefault 72
+                    , parts = [ part1, part2 ]
+                    }
             in
             ( { model
                 | notesForVoice1 = noteList1 |> List.take 30 |> String.join " "
@@ -159,7 +158,6 @@ update msg model =
               }
             , Cmd.batch
                 [ sendCommand <| "tempo:" ++ model.bpmString
-                , sendMusic noteList1
                 , sendPiece <| Player.encodePiece piece
                 ]
             )

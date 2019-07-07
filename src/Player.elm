@@ -14,7 +14,10 @@ encodePart part =
 
 encodePiece : Piece -> Encode.Value
 encodePiece piece =
-    Encode.list encodePart piece
+    Encode.object
+        [ ( "bpm", Encode.int piece.bpm )
+        , ( "parts", Encode.list encodePart piece.parts )
+        ]
 
 
 partFromMelody : String -> String -> List String -> Part
@@ -37,4 +40,4 @@ type alias Part =
 
 
 type alias Piece =
-    List Part
+    { bpm : Int, parts : List Part }

@@ -18,8 +18,9 @@
 
       const synth = new Tone.MembraneSynth().toMaster();
 
-      app.ports.sendMusic.subscribe(function(notes) {
-        console.log("RECEIVED: " + notes)
+      app.ports.sendPiece.subscribe(function(piece) {
+
+        console.log (JSON.stringify(piece))
 
         var makeRest = function(str) {
             if (str == "Rest") {
@@ -32,7 +33,7 @@
           function(time, note) {
             synth.triggerAttackRelease(note, "60hz", time);
           },
-          notes.map(makeRest),
+          piece.parts[0].melody.map(makeRest),
           // ["C3", "Eb3", null, null, null, "G3", "Bb3"],
           "4n"
         ); // end: app.ports.sendMusic.subscribe(function(notes)
@@ -42,31 +43,9 @@
 
         Tone.Transport.loopEnd = '1m'
         Tone.Transport.loop = false
-        Tone.Transport.bpm.value = bpm
+        Tone.Transport.bpm.value = piece.bpm
         Tone.Transport.start();
         Tone.Transport.loop = false
-      });
-
-      app.ports.sendCommand.subscribe(function(command) {
-
-        var args = command.split(":")
-
-        console.log("ARGS: " + args)
-
-        if (args[0] == "tempo") {
-           console.log("tempo = " + args[1] + " bpm")
-           bpm = parseInt(args[1])
-        } else if (args[0] == "stop") {
-          Tone.Transport.stop();
-        }
-
-      })
-
-      app.ports.sendPiece.subscribe(function(value) {
-
-        // var obj = JSON.parse(value)
-
-        console.log (JSON.stringify(value))
 
 
       })
