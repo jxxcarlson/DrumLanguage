@@ -27,8 +27,10 @@ main =
 
 
 type alias Model =
-    { input : String
-    , output : String
+    { voice1String : String
+    , voice2String : String
+    , notesForVoice1 : String
+    , notesForVoice2 : String
     , bpmString : String
     }
 
@@ -41,7 +43,8 @@ type alias Model =
 
 type Msg
     = NoOp
-    | InputText String
+    | ReadVoice1 String
+    | ReadVoice2 String
     | InputBPM String
     | Play
     | Stop
@@ -64,8 +67,10 @@ port sendCommand : String -> Cmd msg
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { input = initialText
-      , output = ""
+    ( { voice1String = initialText
+      , voice2String = ""
+      , notesForVoice1 = ""
+      , notesForVoice2 = ""
       , bpmString = "320"
       }
     , Cmd.none
@@ -107,16 +112,19 @@ update msg model =
             ( model, Cmd.none )
 
         Instructions ->
-            ( { model | input = initialText }, Cmd.none )
+            ( { model | voice1String = initialText }, Cmd.none )
 
         Sample1 ->
-            ( { model | input = sample1Text }, Cmd.none )
+            ( { model | voice1String = sample1Text }, Cmd.none )
 
         Sample2 ->
-            ( { model | input = sample2Text }, Cmd.none )
+            ( { model | voice1String = sample2Text }, Cmd.none )
 
-        InputText str ->
-            ( { model | input = str }, Cmd.none )
+        ReadVoice1 str ->
+            ( { model | voice1String = str }, Cmd.none )
+
+        ReadVoice2 str ->
+            ( { model | voice2String = str }, Cmd.none )
 
         InputBPM str ->
             ( { model | bpmString = str }, Cmd.none )
@@ -127,10 +135,10 @@ update msg model =
         Play ->
             let
                 noteList =
-                    Melody.fromString model.input
+                    Melody.fromString model.voice1String
             in
             ( { model
-                | output = noteList |> List.take 30 |> String.join " "
+                | notesForVoice1 = noteList |> List.take 30 |> String.join " "
               }
             , Cmd.batch [ sendCommand <| "tempo:" ++ model.bpmString, sendNotes noteList ]
             )
@@ -159,7 +167,7 @@ mainColumn model =
     column mainColumnStyle
         [ column [ centerX, spacing 20 ]
             [ title "Techno Drum Language App"
-            , inputText model
+            , readVoice1 model
             , outputDisplay model
             , appButtons model
             ]
@@ -174,14 +182,14 @@ title str =
 outputDisplay : Model -> Element msg
 outputDisplay model =
     row [ centerX, Font.size 11 ]
-        [ text model.output ]
+        [ text model.notesForVoice1 ]
 
 
-inputText : Model -> Element Msg
-inputText model =
+readVoice1 : Model -> Element Msg
+readVoice1 model =
     Input.multiline [ width (px 700), height (px 200) ]
-        { onChange = InputText
-        , text = model.input
+        { onChange = ReadVoice1
+        , text = model.voice1String
         , placeholder = Nothing
         , label = Input.labelLeft [] <| el [] (text "")
         , spellcheck = False
