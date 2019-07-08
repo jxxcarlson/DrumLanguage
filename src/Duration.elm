@@ -1,6 +1,6 @@
 module Duration exposing (Duration, bn, ddhn, ddqn, den, dhn, dqn, dsn, dtn, dwn, en, hn, qn, sfn, sn, wn)
 
-import Rationals exposing (Rational(..))
+import Rational exposing (Rational(..))
 
 
 type alias Duration =

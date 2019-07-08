@@ -9,7 +9,7 @@ module Phoneme exposing
 import Duration exposing (..)
 import Pitch exposing (Pitch, PitchClass(..))
 import Primitive exposing (..)
-import Rationals exposing (..)
+import Rational exposing (..)
 
 
 type PhonemeClass
@@ -37,140 +37,140 @@ toPitchNameList str =
         |> List.map stringOfPrimitive
 
 
-pitchOfPhonemeClass : PhonemeClass -> Primitive ()
+pitchOfPhonemeClass : PhonemeClass -> Primitive Pitch
 pitchOfPhonemeClass pc =
     case pc of
         Vowel ->
-            P ( G, 2 ) qn ()
+            Note qn ( G, 2 )
 
         Approximant ->
-            P ( C, 3 ) qn ()
+            Note qn ( C, 3 )
 
         Nasal ->
-            P ( E, 3 ) qn ()
+            Note qn ( E, 3 )
 
         VoicedFricative ->
-            P ( F, 3 ) qn ()
+            Note qn ( F, 3 )
 
         Fricative ->
-            P ( G, 3 ) qn ()
+            Note qn ( G, 3 )
 
         VoicedPlosive ->
-            P ( Bb, 3 ) qn ()
+            Note qn ( Bb, 3 )
 
         Plosive ->
-            P ( D, 4 ) qn ()
+            Note qn ( D, 4 )
 
         Silence ->
             Rest qn
 
         Punctuation ->
-            P ( C, 2 ) qn ()
+            Note qn ( C, 2 )
 
         _ ->
-            P ( G, 1 ) qn ()
+            Note qn ( G, 1 )
 
 
-primitiveOfPhonemeClass1 : PhonemeClass -> Primitive ()
+primitiveOfPhonemeClass1 : PhonemeClass -> Primitive Pitch
 primitiveOfPhonemeClass1 pc =
     case pc of
         Vowel ->
-            P ( C, 3 ) qn ()
+            Note qn ( C, 3 )
 
         Nasal ->
-            P ( Eb, 3 ) qn ()
+            Note qn ( Eb, 3 )
 
         VoicedFricative ->
-            P ( G, 3 ) qn ()
+            Note qn ( G, 3 )
 
         Fricative ->
-            P ( Bb, 3 ) qn ()
+            Note qn ( Bb, 3 )
 
         VoicedPlosive ->
-            P ( D, 4 ) qn ()
+            Note qn ( D, 4 )
 
         Plosive ->
-            P ( F, 4 ) qn ()
+            Note qn ( F, 4 )
 
         Approximant ->
-            P ( Ab, 4 ) qn ()
+            Note qn ( Ab, 4 )
 
         Silence ->
             Rest qn
 
         Punctuation ->
-            P ( C, 2 ) qn ()
+            Note qn ( C, 2 )
 
         _ ->
-            P ( G, 1 ) qn ()
+            Note qn ( G, 1 )
 
 
-primitiveOfPhonemeClass1a : PhonemeClass -> Primitive ()
+primitiveOfPhonemeClass1a : PhonemeClass -> Primitive Pitch
 primitiveOfPhonemeClass1a pc =
     case pc of
         Vowel ->
-            P ( G, 1 ) qn ()
+            Note qn ( G, 1 )
 
         Nasal ->
-            P ( E, 3 ) qn ()
+            Note qn ( E, 3 )
 
         VoicedFricative ->
-            P ( G, 3 ) qn ()
+            Note qn ( G, 3 )
 
         Fricative ->
-            P ( Bb, 3 ) qn ()
+            Note qn ( Bb, 3 )
 
         VoicedPlosive ->
-            P ( D, 4 ) qn ()
+            Note qn ( D, 4 )
 
         Plosive ->
-            P ( Eb, 4 ) qn ()
+            Note qn ( Eb, 4 )
 
         Approximant ->
-            P ( Db, 3 ) qn ()
+            Note qn ( Db, 3 )
 
         Silence ->
             Rest qn
 
         Punctuation ->
-            P ( C, 2 ) qn ()
+            Note qn ( C, 2 )
 
         _ ->
-            P ( G, 1 ) qn ()
+            Note qn ( G, 1 )
 
 
-pitchOfPhonemeClass3 : PhonemeClass -> Primitive ()
+pitchOfPhonemeClass3 : PhonemeClass -> Primitive Pitch
 pitchOfPhonemeClass3 pc =
     case pc of
         Vowel ->
-            P ( C, 3 ) qn ()
+            Note qn ( C, 3 )
 
         Nasal ->
-            P ( E, 3 ) qn ()
+            Note qn ( E, 3 )
 
         VoicedFricative ->
-            P ( F, 3 ) qn ()
+            Note qn ( F, 3 )
 
         Fricative ->
-            P ( G, 3 ) qn ()
+            Note qn ( G, 3 )
 
         VoicedPlosive ->
-            P ( Bb, 3 ) qn ()
+            Note qn ( Bb, 3 )
 
         Plosive ->
-            P ( C, 4 ) qn ()
+            Note qn ( C, 4 )
 
         Approximant ->
-            P ( D, 4 ) qn ()
+            Note qn ( D, 4 )
 
         Silence ->
             Rest qn
 
         Punctuation ->
-            P ( C, 2 ) qn ()
+            Note qn ( C, 2 )
 
         _ ->
-            P ( G, 4 ) qn ()
+            Note qn ( G, 4 )
 
 
 stringOfPhonemeClass : PhonemeClass -> String

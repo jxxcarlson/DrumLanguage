@@ -1,4 +1,4 @@
-module Rationals exposing (Rational(..), add, div, gcd, inject, mul, project, reduce, sub)
+module Rational exposing (Rational(..), add, div, gcd, inject, max, mul, project, reduce, sub, sum)
 
 
 type Rational
@@ -42,6 +42,33 @@ add (R a b) (R c d) =
             b * d
     in
     reduce <| R num denom
+
+
+max : Rational -> Rational -> Rational
+max p q =
+    let
+        (R a b) =
+            p
+
+        (R c d) =
+            q
+    in
+    if a * d > b * c then
+        p
+
+    else
+        q
+
+
+{-|
+
+> sum [(R 1 2), (R 1 3), (R 1 5)]
+> R 31 30 : Rational
+
+-}
+sum : List Rational -> Rational
+sum list =
+    List.foldl (\x acc -> add x acc) (R 0 1) list
 
 
 sub : Rational -> Rational -> Rational
