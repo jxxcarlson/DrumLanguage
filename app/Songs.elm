@@ -22,6 +22,11 @@ repetition, etc.
 initialTextVoice2 =
     """Note that there are two voices.  The first (above) is playing
 in quarter notes, while the second (here) is playing in eight notes.
+
+To my ear, Sample 2 is the most interesting.  Note that the two
+parts have lengths 36 and 11, in quarter and eight notes, respectively.
+Counted in eighth notes, the lengths are 72 and 11.  Thus the song
+repeats itself every 72 x 11 = 792 beats.
 """
 
 
@@ -34,8 +39,12 @@ sample1TextVoice2 =
 
 
 sample2TextVoice1 =
-    "MississipiipississiM"
+    "MississipiipississiM,,,,,,,,,,,,,,,,"
 
 
 sample2TextVoice2 =
-    "Wawachaachaadadadada,,"
+    "Wawacha,,,,"
+
+
+
+--   "Wawachaachaadadadada,,,,"
