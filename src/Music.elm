@@ -1,7 +1,51 @@
 module Music exposing
-    ( Control
+    ( Articulation(..)
+    , Control(..)
+    , Dynamic(..)
+    , InstrumentName(..)
+    , Mode(..)
     , Music(..)
+    , NoteHead(..)
+    , Ornament(..)
+    , PhraseAttribute(..)
+    , StdLoudness(..)
+    , Tempo(..)
+    , a
+    , aS
+    , af
+    , aff
+    , ass
+    , b
+    , bf
+    , bff
+    , bs
+    , bss
+    , c
+    , cf
+    , cff
+    , cs
+    , css
+    , d
+    , df
+    , dff
+    , ds
+    , dss
     , duration
+    , ee
+    , ef
+    , eff
+    , es
+    , ess
+    , f
+    , ff
+    , fff
+    , fs
+    , fss
+    , g
+    , gf
+    , gff
+    , gs
+    , gss
     , note
     , rest
     , sequence
@@ -257,7 +301,7 @@ type InstrumentName
     | Applause
     | Gunshot
     | Percussion
-    | CustomInstrument String
+    | CustomInstrument String String
 
 
 sequence : List (Music a) -> Music a
@@ -358,7 +402,9 @@ ef o d_ =
     note d_ ( Ef, o )
 
 
-e o d_ =
+{-| e conflicts with e in Basics
+-}
+ee o d_ =
     note d_ ( E, o )
 
 
@@ -435,6 +481,8 @@ a o d_ =
     note d_ ( A, o )
 
 
+{-| as conflicts with keyword
+-}
 aS o d_ =
     note d_ ( As, o )
 

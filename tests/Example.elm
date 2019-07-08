@@ -89,4 +89,23 @@ basicTestMusic =
                         Sequence [ n1, n2 ]
                 in
                 Expect.equal (Music.duration (Stack [ p, q ])) (R 3 4)
+        , test "251 progression, HSM p. 35" <|
+            \_ ->
+                let
+                    dMinor =
+                        stack [ d 4 wn, f 4 wn, a 4 wn ]
+
+                    gMajor =
+                        stack [ g 4 wn, b 4 wn, d 4 wn ]
+
+                    cMajor =
+                        stack [ c 4 bn, ee 4 bn, g 4 bn ]
+
+                    c251 =
+                        sequence [ dMinor, gMajor, cMajor ]
+
+                    c251Expected =
+                        Sequence [ Stack [ Prim (Note (R 1 1) ( D, 4 )), Prim (Note (R 1 1) ( F, 4 )), Prim (Note (R 1 1) ( A, 4 )) ], Stack [ Prim (Note (R 1 1) ( G, 4 )), Prim (Note (R 1 1) ( B, 4 )), Prim (Note (R 1 1) ( D, 4 )) ], Stack [ Prim (Note (R 2 1) ( C, 4 )), Prim (Note (R 2 1) ( E, 4 )), Prim (Note (R 2 1) ( G, 4 )) ] ]
+                in
+                Expect.equal c251 c251Expected
         ]
