@@ -35,7 +35,7 @@ sample1TextVoice1 =
 
 
 sample1TextVoice2 =
-    "dtaattddttaa,"
+    ",,,,,,zzaawwattaazz"
 
 
 sample2TextVoice1 =

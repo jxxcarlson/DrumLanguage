@@ -73,7 +73,7 @@ init flags =
       , voice2String = Songs.initialTextVoice2
       , notesForVoice1 = ""
       , notesForVoice2 = ""
-      , bpmString = "160"
+      , bpmString = "165"
       }
     , Cmd.none
     )
