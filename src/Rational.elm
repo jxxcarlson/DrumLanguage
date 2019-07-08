@@ -1,4 +1,4 @@
-module Rational exposing (Rational(..), add, div, gcd, inject, max, mul, project, reduce, sub, sum)
+module Rational exposing (Rational(..), add, div, gcd, inject, max, maxList, mul, project, reduce, sub, sum)
 
 
 type Rational
@@ -58,6 +58,17 @@ max p q =
 
     else
         q
+
+
+{-|
+
+> maxList [(R 0 1), (R 1 2), (R 1 3), (R 2 3)]
+> R 2 3 : Rational
+
+-}
+maxList : List Rational -> Rational
+maxList list =
+    List.foldl (\item acc -> max item acc) (R 0 1) list
 
 
 {-|

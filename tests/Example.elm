@@ -51,7 +51,7 @@ basicTestMusic =
                         Prim <| Note qn ( E, 3 )
 
                     music =
-                        L [ n1, n2, n3 ]
+                        Sequence [ n1, n2, n3 ]
                 in
                 Expect.equal (Music.duration music) (R 3 4)
         , test "duration on 4-note phrase built with `Sequence`" <|
@@ -67,9 +67,9 @@ basicTestMusic =
                         Prim <| Note qn ( E, 3 )
 
                     p =
-                        L [ n1, n2, n3 ]
+                        Sequence [ n1, n2, n3 ]
                 in
-                Expect.equal (Music.duration (Sequence p p)) (R 3 2)
+                Expect.equal (Music.duration (Sequence [ p, p ])) (R 3 2)
         , test "duration on 4-note phrase built with `Stack`" <|
             \_ ->
                 let
@@ -83,10 +83,10 @@ basicTestMusic =
                         Prim <| Note qn ( E, 3 )
 
                     p =
-                        L [ n1, n2, n3 ]
+                        Sequence [ n1, n2, n3 ]
 
                     q =
-                        L [ n1, n2 ]
+                        Sequence [ n1, n2 ]
                 in
-                Expect.equal (Music.duration (Stack p q)) (R 3 4)
+                Expect.equal (Music.duration (Stack [ p, q ])) (R 3 4)
         ]

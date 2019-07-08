@@ -8,9 +8,8 @@ import Rational exposing (Rational, add, max, sum)
 
 type Music a
     = Prim (Primitive a)
-    | L (List (Music a))
-    | Sequence (Music a) (Music a)
-    | Stack (Music a) (Music a)
+    | Sequence (List (Music a))
+    | Stack (List (Music a))
 
 
 
@@ -27,11 +26,8 @@ duration music =
         Prim primitive ->
             Primitive.duration primitive
 
-        L list ->
+        Sequence list ->
             Rational.sum (List.map duration list)
 
-        Sequence p q ->
-            Rational.add (duration p) (duration q)
-
-        Stack p q ->
-            Rational.max (duration p) (duration q)
+        Stack list ->
+            Rational.maxList (List.map duration list)
