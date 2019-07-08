@@ -1,5 +1,6 @@
 module Pitch exposing
-    ( Pitch
+    ( AbsPitch
+    , Pitch
     , PitchClass(..)
     , stringOfPitch
     )
@@ -49,6 +50,10 @@ type alias Octave =
 
 type alias Pitch =
     ( PitchClass, Octave )
+
+
+type alias AbsPitch =
+    Int
 
 
 stringOfPitch : Pitch -> String
