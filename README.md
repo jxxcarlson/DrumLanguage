@@ -52,11 +52,19 @@ data Music a =
 
 The code ` Music a:+:Music a` is for sequential composition, e.g.,
 if `p` and `q` are phrases, then `p :+: q` is the longer phrase
-obtained by laying the two phrases end-to-end.
+obtained by laying the two phrases end-to-end.  In the Elm
+version, we say `Sequence p q`.  From a notational and
+psychological point of view, hte construct `p :+: q` is
+better, especially since (as an associative operator), one
+can write `p :+: q :+: r` and longer versions thereof.
+With `Sequence`, one has to write the awkward
+`Sequence (Sequence p q) r`.  As the number of terms
+increases, so does the awkwardness.
 
 
-The code ` Music a:=:Music a` is for parallel composition, e.g.,
+The code ` Music a :=: Music a` is for parallel composition, e.g.,
 if `p` and `q` are voices, say the treble and base in one of
 Bach's two-part inventions, then `p :=: q` is the music with
 those two parts.  The duration of `p :=: q` is the maximum of
-the individual durations.
+the individual durations.  Regarding the Elm version, `Stack`,
+the same considerations as apply to `Sequence` apply here.
