@@ -35,10 +35,13 @@ type Music a
     | L (List (Music a))
     | Sequence (Music a) (Music a)
     | Stack (Music a) (Music a)
-    | Modify Control (Music a)
 ```
 
-Compare this to the Hudack's implementation,
+and plan to add `Modify Control (Music a)` to it.
+The second item, `L (List (Music a))` is a dodge/kludge
+related to the lack of custom operators (see below).
+
+Compare this type definition to Hudack's,
 as found at the bottom of page 30 of
 *The Haskell School of Music*:
 
