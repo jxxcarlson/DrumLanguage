@@ -32,14 +32,11 @@ I've implemented the `Music a` type as follows
 ```
 type Music a
     = Prim (Primitive a)
-    | L (List (Music a))
-    | Sequence (Music a) (Music a)
-    | Stack (Music a) (Music a)
+    | Sequence (List (Music a))
+    | Stack (List (Music a))
 ```
 
 and plan to add `Modify Control (Music a)` to it.
-The second item, `L (List (Music a))` is a dodge/kludge
-related to the lack of custom operators (see below).
 
 Compare this type definition to Hudack's,
 as found at the bottom of page 30 of
@@ -56,18 +53,11 @@ data Music a =
 The code ` Music a:+:Music a` is for sequential composition, e.g.,
 if `p` and `q` are phrases, then `p :+: q` is the longer phrase
 obtained by laying the two phrases end-to-end.  In the Elm
-version, we say `Sequence p q`.  From a notational and
-psychological point of view, hte construct `p :+: q` is
-better, especially since (as an associative operator), one
-can write `p :+: q :+: r` and longer versions thereof.
-With `Sequence`, one has to write the awkward
-`Sequence (Sequence p q) r`.  As the number of terms
-increases, so does the awkwardness.
-
+version, we say `Sequence [p, q]`.  The duration of this piece of
+music is the sum of the durations of its components.
 
 The code ` Music a :=: Music a` is for parallel composition, e.g.,
 if `p` and `q` are voices, say the treble and base in one of
 Bach's two-part inventions, then `p :=: q` is the music with
 those two parts.  The duration of `p :=: q` is the maximum of
-the individual durations.  Regarding the Elm version, `Stack`,
-the same considerations as apply to `Sequence` apply here.
+the individual durations.  
