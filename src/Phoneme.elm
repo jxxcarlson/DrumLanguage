@@ -33,7 +33,7 @@ toPitchNameList str =
         |> String.split ""
         |> List.map phonemeClassOfString
         |> List.filter (\s -> s /= Unknown)
-        |> List.map primitiveOfPhonemeClass1
+        |> List.map primitiveOfPhonemeClass3
         |> List.map stringOfPrimitive
 
 
@@ -56,7 +56,7 @@ pitchOfPhonemeClass pc =
             Note qn ( G, 3 )
 
         VoicedPlosive ->
-            Note qn ( Bb, 3 )
+            Note qn ( Bf, 3 )
 
         Plosive ->
             Note qn ( D, 4 )
@@ -78,13 +78,13 @@ primitiveOfPhonemeClass1 pc =
             Note qn ( C, 3 )
 
         Nasal ->
-            Note qn ( Eb, 3 )
+            Note qn ( Ef, 3 )
 
         VoicedFricative ->
             Note qn ( G, 3 )
 
         Fricative ->
-            Note qn ( Bb, 3 )
+            Note qn ( Bf, 3 )
 
         VoicedPlosive ->
             Note qn ( D, 4 )
@@ -93,7 +93,7 @@ primitiveOfPhonemeClass1 pc =
             Note qn ( F, 4 )
 
         Approximant ->
-            Note qn ( Ab, 4 )
+            Note qn ( Af, 4 )
 
         Silence ->
             Rest qn
@@ -118,16 +118,16 @@ primitiveOfPhonemeClass1a pc =
             Note qn ( G, 3 )
 
         Fricative ->
-            Note qn ( Bb, 3 )
+            Note qn ( Bf, 3 )
 
         VoicedPlosive ->
             Note qn ( D, 4 )
 
         Plosive ->
-            Note qn ( Eb, 4 )
+            Note qn ( Ef, 4 )
 
         Approximant ->
-            Note qn ( Db, 3 )
+            Note qn ( Df, 3 )
 
         Silence ->
             Rest qn
@@ -139,8 +139,8 @@ primitiveOfPhonemeClass1a pc =
             Note qn ( G, 1 )
 
 
-pitchOfPhonemeClass3 : PhonemeClass -> Primitive Pitch
-pitchOfPhonemeClass3 pc =
+primitiveOfPhonemeClass3 : PhonemeClass -> Primitive Pitch
+primitiveOfPhonemeClass3 pc =
     case pc of
         Vowel ->
             Note qn ( C, 3 )
@@ -155,7 +155,7 @@ pitchOfPhonemeClass3 pc =
             Note qn ( G, 3 )
 
         VoicedPlosive ->
-            Note qn ( Bb, 3 )
+            Note qn ( Bf, 3 )
 
         Plosive ->
             Note qn ( C, 4 )

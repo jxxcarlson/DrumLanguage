@@ -8,20 +8,20 @@ module Pitch exposing
 type PitchClass
     = C
     | Cs
-    | Db
+    | Df
     | D
     | Ds
-    | Eb
+    | Ef
     | E
     | F
     | Fs
-    | Gb
+    | Gf
     | G
     | Gs
-    | Ab
+    | Af
     | A
     | As
-    | Bb
+    | Bf
     | B
 
 
@@ -47,8 +47,8 @@ stringOfPitchClass pitchClass =
         Cs ->
             "C#"
 
-        Db ->
-            "Db"
+        Df ->
+            "Df"
 
         D ->
             "D"
@@ -56,8 +56,8 @@ stringOfPitchClass pitchClass =
         Ds ->
             "D#"
 
-        Eb ->
-            "Eb"
+        Ef ->
+            "Ef"
 
         E ->
             "E"
@@ -68,8 +68,8 @@ stringOfPitchClass pitchClass =
         Fs ->
             "F#"
 
-        Gb ->
-            "Gb"
+        Gf ->
+            "Gf"
 
         G ->
             "G"
@@ -77,8 +77,8 @@ stringOfPitchClass pitchClass =
         Gs ->
             "Gs"
 
-        Ab ->
-            "Ab"
+        Af ->
+            "Af"
 
         A ->
             "A"
@@ -86,8 +86,8 @@ stringOfPitchClass pitchClass =
         As ->
             "A#"
 
-        Bb ->
-            "Bb"
+        Bf ->
+            "Bf"
 
         B ->
             "B"
