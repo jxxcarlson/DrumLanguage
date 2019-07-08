@@ -1,7 +1,7 @@
 # Music project
 
 This project has three aims.  (1) Implement the fun but totally
-useless Techno Drum App (see `./app`).  (2) Implement as much of
+useless [Techno Drum App](https://jxxcarlson.github.io/app/drumlanguage.html) (see `./app`).  (2) Implement as much of
 the basic functionality of *Euterpia*, the music composition system created by
 Paul Hudak (see *The Haskell School of Music*).  As the name indicates,
 the system is written in Haskell, and one uses it to write music directly
@@ -13,9 +13,9 @@ The drum app is a very weak application of items (2) and (3).  It is
 first test case for the viability of this project.  I plan some other
 demo apps which will more fully test the system as it develops.
 
-For now, you cam play with the drum app at [DRUM APP](https://jxxcarlson.github.io/app/drumlanguage.html).  The little
+**Note.** The
 [article](https://jxxcarlson.io/posts/2019-06-29-drum-language/)
-on African drum languages gives some context.
+on African drum languages gives some context for the app.
 
 ## Current state
 
