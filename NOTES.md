@@ -1,6 +1,14 @@
+## Audio compositions
 
+http://www.katyarozanova.com/itp-blog/2017/11/7/pattern-and-sound-series-fcxc7
+
+http://www.ivymeadows.net/itp-blog/tag/The+Code+of+Music
+
+https://www.guitarland.com/MusicTheoryWithToneJS/EditSynth.html
 
 ## Tone.js
+
+[Very good reference](https://www.guitarland.com/MusicTheoryWithToneJS/TonejsSetup.html)
 
 [Good reference](https://www.javascripting.com/view/tone-js)
 [Tone.js](https://tonejs.github.io/)

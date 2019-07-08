@@ -105,6 +105,40 @@ primitiveOfPhonemeClass1 pc =
             P ( G, 1 ) qn ()
 
 
+primitiveOfPhonemeClass1a : PhonemeClass -> Primitive ()
+primitiveOfPhonemeClass1a pc =
+    case pc of
+        Vowel ->
+            P ( G, 1 ) qn ()
+
+        Nasal ->
+            P ( E, 3 ) qn ()
+
+        VoicedFricative ->
+            P ( G, 3 ) qn ()
+
+        Fricative ->
+            P ( Bb, 3 ) qn ()
+
+        VoicedPlosive ->
+            P ( D, 4 ) qn ()
+
+        Plosive ->
+            P ( Eb, 4 ) qn ()
+
+        Approximant ->
+            P ( Db, 3 ) qn ()
+
+        Silence ->
+            Rest qn
+
+        Punctuation ->
+            P ( C, 2 ) qn ()
+
+        _ ->
+            P ( G, 1 ) qn ()
+
+
 pitchOfPhonemeClass3 : PhonemeClass -> Primitive ()
 pitchOfPhonemeClass3 pc =
     case pc of
