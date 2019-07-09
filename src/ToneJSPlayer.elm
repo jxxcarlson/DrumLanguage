@@ -1,6 +1,7 @@
-module ToneJSPlayer exposing (eventArrayOfMusic, eventArrayOfMusicAtTime2)
+module ToneJSPlayer exposing (encodeEventList, eventListOfMusic)
 
 import Duration exposing (Duration)
+import Json.Encode as Encode
 import Music exposing (Music(..))
 import Pitch exposing (Pitch)
 import Primitive exposing (Primitive(..))
@@ -38,6 +39,26 @@ type alias Event =
     }
 
 
+encodeEvent : Event -> Encode.Value
+encodeEvent event =
+    Encode.object
+        [ ( "time", Encode.string event.time )
+        , ( "note", Encode.string event.note )
+        , ( "dur", Encode.string event.duration )
+        ]
+
+
+{-|
+
+> eventListOfMusic 60 m |> encodeEventList
+> <internals> : Json.Encode.Value
+
+-}
+encodeEventList : List Event -> Encode.Value
+encodeEventList eventList =
+    Encode.list encodeEvent eventList
+
+
 realTime : Rate -> Duration -> Float
 realTime rate dur =
     rate * Rational.realValue dur
@@ -53,14 +74,14 @@ realTimeAsString rate dur =
 > m = sequence [c 3 hn, d 3 qn]
 > Sequence [Prim (Note (R 1 2) (C,3)),Prim (Note (R 1 4) (D,3))]
 
-> eventArrayOfMusic 60 m
+> eventListOfMusic 60 m
 > [{ duration = "0.5", note = "C3", time = "0" },{ duration = "0.25", note = "D3", time = "0.5" }]
 
     : List Event
 
 -}
-eventArrayOfMusicAtTime : TransportTime -> BPM -> Music Pitch -> List Event
-eventArrayOfMusicAtTime tt bpm music =
+eventArrayOfMusicAtTime1 : TransportTime -> BPM -> Music Pitch -> List Event
+eventArrayOfMusicAtTime1 tt bpm music =
     let
         rate =
             60.0 / toFloat bpm
@@ -78,8 +99,8 @@ eventArrayOfMusicAtTime tt bpm music =
     List.foldl folder ( Rational.zero, [] ) list |> Tuple.second |> List.reverse
 
 
-eventArrayOfMusic : BPM -> Music Pitch -> List Event
-eventArrayOfMusic =
+eventArrayOfMusic1 : BPM -> Music Pitch -> List Event
+eventArrayOfMusic1 =
     eventArrayOfMusicAtTime Rational.zero
 
 
@@ -93,8 +114,24 @@ eventOfPrimitive tt_ rate p =
             { time = realTimeAsString rate tt_, note = "Silence", duration = realTimeAsString rate dur }
 
 
-eventArrayOfMusicAtTime2 : TransportTime -> BPM -> Music Pitch -> List Event
-eventArrayOfMusicAtTime2 startTime bpm music =
+{-| dMinor = stack [ d 4 wn, f 4 wn, a 4 wn ]
+gMajor = stack [ g 4 wn, b 4 wn, d 4 wn ]
+cMajor = stack [ c 4 bn, ee 4 bn, g 4 bn ]
+iiVI = sequence [ dMinor, gMajor, cMajor ]
+
+> eventListOfMusic 60 iiVI
+> [{ duration = "1", note = "A4", time = "0" },{ duration = "1", note = "F4", time = "0" },{ duration = "1", note = "D4", time = "0" },{ duration = "1", note = "D4", time = "1" },{ duration = "1", note = "B4", time = "1" },{ duration = "1", note = "G4", time = "1" },{ duration = "2", note = "G4", time = "2" },{ duration = "2", note = "E4", time = "2" },{ duration = "2", note = "C4", time = "2" }]
+
+    : List Event
+
+-}
+eventListOfMusic : BPM -> Music Pitch -> List Event
+eventListOfMusic =
+    eventArrayOfMusicAtTime Rational.zero
+
+
+eventArrayOfMusicAtTime : TransportTime -> BPM -> Music Pitch -> List Event
+eventArrayOfMusicAtTime startTime bpm music =
     let
         rate =
             60.0 / toFloat bpm
@@ -112,7 +149,7 @@ eventArrayOfMusicAtTime2 startTime bpm music =
                         )
 
                     _ ->
-                        ( Rational.add tt_ (Music.duration mu), eventArrayOfMusicAtTime2 tt_ bpm mu ++ acc )
+                        ( Rational.add tt_ (Music.duration mu), eventArrayOfMusicAtTime tt_ bpm mu ++ acc )
     in
     case music of
         Prim p ->
@@ -122,7 +159,7 @@ eventArrayOfMusicAtTime2 startTime bpm music =
             List.foldl folder ( startTime, [] ) s |> Tuple.second |> List.reverse
 
         Stack s ->
-            List.map (eventArrayOfMusicAtTime2 startTime bpm) s |> List.concat
+            List.map (eventArrayOfMusicAtTime startTime bpm) s |> List.concat
 
         Modify _ _ ->
             []

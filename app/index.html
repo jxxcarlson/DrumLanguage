@@ -14,12 +14,11 @@
         node: document.getElementById('elm')
       });
 
-      var bpm = 320
+      var bpm = 80
 
-      var synth0 = new Tone.MembraneSynth().toMaster();
-      var synth1 = new Tone.MembraneSynth().toMaster();
+      var synth = new Tone.MembraneSynth().toMaster();
 
-      app.ports.sendPiece.subscribe(function(piece) {
+      app.ports.sendMusic.subscribe(function(piece) {
 
         var makeRest = function(str) {
             if (str == "Rest") {

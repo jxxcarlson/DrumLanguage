@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Drum App</title>
+  <script src="Example.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/13.0.1/Tone.min.js" ></script>
+</head>
+
+<body>
+  <div id="elm"></div>
+  <script>
+      var app = Elm.Example.init({
+        node: document.getElementById('elm')
+      });
+
+      var bpm = 80
+
+
+      app.ports.sendMusic.subscribe(function(eventArray) {
+
+        var eventArray2 = [{ time : 0, note : 'C4', dur : '4n'},
+           	{ time : {'4n' : 1}, note : 'E4', dur : '4n'},
+           	{ time : {'4n' : 2}, note : 'G4', dur : '4n'},
+           	{ time : {'4n' : 3}, note : 'B4', dur : '4n'},
+       ]
+
+       var eventArray3 = [{"time":"0","note":"A4","duration":"0.75"},
+       {"time":"0","note":"F4","duration":"0.75"},
+       {"time":"0","note":"D4","duration":"0.75"},
+       {"time":"0.75","note":"D4","duration":"0.75"},
+       {"time":"0.75","note":"B4","duration":"0.75"},
+       {"time":"0.75","note":"G4","duration":"0.75"},
+       {"time":"1.5","note":"G4","duration":"0.75"},
+       {"time":"1.5","note":"E4","duration":"0.75"},
+       {"time":"1.5","note":"C4","duration":"0.75"}]
+
+       var eventArray4 = [
+       {"time":"0","note":"C3","dur":"32n"},
+       {"time":"1.0","note":"D3","dur":"32n"},
+       {"time":"2.0","note":"C3","dur":"4n"},
+       {"time":"3.0","note":"Db3","dur":"4n"},
+       {"time":"4.0","note":"G#3","dur":"4n"},
+       {"time":"5.0","note":"C1","dur":"4n"}
+     ]
+
+        console.log("JSON: " + JSON.stringify(eventArray))
+
+        console.log("Play ...")
+        var synth = new Tone.Synth().toMaster()
+        //pass in an array of events
+        var part = new Tone.Part(function(time, event){
+        	  synth.triggerAttackRelease(event.note, event.dur, time)
+          }, eventArray
+        )
+
+        part.start(0).stop('2m')
+        //part.loop = 0
+        //part.loopEnd = '0'
+
+        Tone.Transport.bpm.value = 120
+        Tone.Transport.start();
+
+      })
+
+      app.ports.sendCommand.subscribe(function(command) {
+
+        var args = command.split(":")
+
+        console.log("ARGS: " + args)
+
+        if (args[0] == "tempo") {
+           console.log("tempo = " + args[1] + " bpm")
+           bpm = parseInt(args[1])
+        } else if (args[0] == "stop") {
+          Tone.Transport.stop();
+        }
+
+      })
+
+  </script>
+
+</body>
+</html>

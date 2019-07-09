@@ -16,43 +16,21 @@
   </tone-demo>
   <script>
 
-    var durVal = '8n'
     var synth = new Tone.Synth().toMaster()
-    //pass in an array of events
+
     var part = new Tone.Part(function(time, event){
-    	//the events will be given to the callback with the time they occur
-    	synth.triggerAttackRelease(event.note, event.dur, time)
-    }, [{ time : 0, note : 'C4', dur : '4n'},
-    	{ time : {'4n' : 1}, note : 'E4', dur : '4n'},
-    	{ time : {'4n' : 2}, note : 'G4', dur : '4n'},
-    	{ time : {'4n' : 3}, note : 'B4', dur : '4n'},
-      // { time : {'4n' : 4}, note : 'C5', dur : '32n'}
-      	// { time : {'4n' : 1, '8n' : 1}, note : 'E5', dur : '32n'},
-      	// { time : {'4n' : 1, '8n' : 2}, note : 'G5', dur : '32n'},
-      	// { time : {'4n' : 1, '8n' : 3}, note : 'B5', dur : '32n'},
+       synth.triggerAttackRelease(event.note, event.dur, time)
+       }, [{ time : 0, note : 'C4', dur : '4n'},
+          	{ time : {'4n' : 1}, note : 'E4', dur : '4n'},
+          	{ time : {'4n' : 2}, note : 'G4', dur : '4n'},
+          	{ time : {'4n' : 3}, note : 'B4', dur : '4n'},
       ])
 
-
-      var music = [{ time : 0, note : 'C4', dur : '4n'},
-      	{ time : '0.5', note : 'E4', dur : '4n'},
-      	{ time : '1', note : 'G4', dur : '4n'},
-      	{ time : '1.5', note : 'B4', dur : '4n'},
-        { time : 2, note : 'C5', dur : '32n'},
-        	{ time : '2.125', note : 'E5', dur : '32n'},
-        	{ time : '2.25', note : 'G5', dur : '32n'},
-        	{ time : '2.375', note : 'B5', dur : '32n'},
-        ]
-    //start the part at the beginning of the Transport's timeline
     part.start(0)
-
-    //loop the part 3 times
     part.loop = 1
     part.loopEnd = '1m'
-    Tone.Transport.bpm.value = 120
 
-    //start/stop the transport
 
-    //start/stop the transport
     document.querySelector('tone-play-toggle').addEventListener('change', e => Tone.Transport.toggle())
 
   </script>
