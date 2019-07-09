@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test</title>
+  <script src="https://unpkg.com/@webcomponents/webcomponentsjs@^2/webcomponents-bundle.js"></script>
+<script src="https://unpkg.com/tone"></script>
+<script src="https://unpkg.com/@tonejs/ui"></script>
+
+
+</head>
+
+<body>
+  <tone-demo>
+    <tone-play-toggle></tone-play-toggle>
+  </tone-demo>
+  <script>
+    var bpm = 80
+
+    var synth = new Tone.MembraneSynth().toMaster();
+
+    const synthPart = new Tone.Sequence(
+      function(time, note) {
+        synth.triggerAttackRelease(note, "60hz", time);
+      },
+      ["C3", "Eb3", "G3", "Bb3", null, null],
+      // ["C3", "Eb3", null, null, null, "G3", "Bb3"],
+      "4n"
+    );
+
+
+    // Setup the synth to be ready to play on beat 1
+    synthPart.start();
+
+
+    Tone.Transport.loopEnd = '1m'
+    Tone.Transport.loop = false
+    Tone.Transport.bpm.value = bpm
+    Tone.Transport.start();
+    Tone.Transport.loop = false
+
+
+    //start/stop the transport
+    document.querySelector('tone-play-toggle').addEventListener('change', e => Tone.Transport.toggle())
+
+  </script>
+
+</body>
+</html>

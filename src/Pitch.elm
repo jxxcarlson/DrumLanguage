@@ -3,6 +3,7 @@ module Pitch exposing
     , Pitch
     , PitchClass(..)
     , stringOfPitch
+    , tjsStringOfPitch
     )
 
 
@@ -58,6 +59,11 @@ type alias AbsPitch =
 
 stringOfPitch : Pitch -> String
 stringOfPitch ( pitchClass, octave ) =
+    stringOfPitchClass pitchClass ++ String.fromInt octave
+
+
+tjsStringOfPitch : Pitch -> String
+tjsStringOfPitch ( pitchClass, octave ) =
     stringOfPitchClass pitchClass ++ String.fromInt octave
 
 
@@ -168,3 +174,112 @@ stringOfPitchClass pitchClass =
 
         Bss ->
             "Bss"
+
+
+tjsStringOfPitchClass : PitchClass -> String
+tjsStringOfPitchClass pitchClass =
+    case pitchClass of
+        Cff ->
+            "C##"
+
+        Cf ->
+            "Cb"
+
+        C ->
+            "C"
+
+        Dff ->
+            "D##"
+
+        Cs ->
+            "C#"
+
+        Df ->
+            "Db"
+
+        Css ->
+            "C##"
+
+        D ->
+            "D"
+
+        Eff ->
+            "Ebb"
+
+        Ds ->
+            "D#"
+
+        Ef ->
+            "Eb"
+
+        Fff ->
+            "F##"
+
+        Dss ->
+            "D##"
+
+        E ->
+            "E"
+
+        Ff ->
+            "Fb"
+
+        Es ->
+            "E#"
+
+        F ->
+            "F"
+
+        Gff ->
+            "Gbb"
+
+        Ess ->
+            "E##"
+
+        Fs ->
+            "F#"
+
+        Gf ->
+            "Gb"
+
+        Fss ->
+            "F##"
+
+        G ->
+            "G"
+
+        Aff ->
+            "Abb"
+
+        Gs ->
+            "G#"
+
+        Af ->
+            "Ab"
+
+        Gss ->
+            "G##"
+
+        A ->
+            "A"
+
+        Bff ->
+            "Bbb"
+
+        As ->
+            "A#"
+
+        Bf ->
+            "Bb"
+
+        Ass ->
+            "A##"
+
+        B ->
+            "B"
+
+        Bs ->
+            "B#"
+
+        Bss ->
+            "B##"

@@ -1,8 +1,33 @@
-module Rational exposing (Rational(..), add, div, gcd, inject, max, maxList, mul, project, reduce, sub, sum)
+module Rational exposing
+    ( Rational(..)
+    , add
+    , div
+    , gcd
+    , inject
+    , max
+    , maxList
+    , mul
+    , project
+    , realValue
+    , reduce
+    , sub
+    , sum
+    , zero
+    )
 
 
 type Rational
     = R Int Int
+
+
+zero : Rational
+zero =
+    R 0 1
+
+
+realValue : Rational -> Float
+realValue (R a b) =
+    toFloat a / toFloat b
 
 
 reduce : Rational -> Rational

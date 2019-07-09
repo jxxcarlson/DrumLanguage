@@ -3,6 +3,21 @@ module Player exposing (Part, Piece, emptyPiece, encodePiece, partFromMelody)
 import Json.Encode as Encode
 
 
+type alias Part =
+    { melody : List String
+    , rhythm : List String
+    , velocity : List String
+    }
+
+
+type alias Piece =
+    { bpm : Int, parts : List Part }
+
+
+emptyPiece =
+    Piece 0 []
+
+
 encodePart : Part -> Encode.Value
 encodePart part =
     Encode.object
@@ -30,18 +45,3 @@ partFromMelody beatNote velocity melody =
     , rhythm = List.repeat beats beatNote
     , velocity = List.repeat beats velocity
     }
-
-
-type alias Part =
-    { melody : List String
-    , rhythm : List String
-    , velocity : List String
-    }
-
-
-type alias Piece =
-    { bpm : Int, parts : List Part }
-
-
-emptyPiece =
-    Piece 0 []

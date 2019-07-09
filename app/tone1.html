@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/13.0.1/Tone.min.js" ></script>
+</head>
+
+<body>
+  <div id="test"></div>
+  <h1>Tone, example 1</h1>
+  <script>
+
+    // https://tonejs.github.io/
+    //create a synth and connect it to the master output (your speakers)
+    var synth = new Tone.Synth().toMaster()
+
+    //play a middle 'C' for the duration of an 8th note
+    synth.triggerAttackRelease('C4', '8n')
+
+  </script>
+
+</body>
+</html>

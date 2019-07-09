@@ -39,6 +39,7 @@ module Music exposing
     , f
     , ff
     , fff
+    , flatten
     , fs
     , fss
     , g
@@ -64,6 +65,33 @@ type Music a
     | Sequence (List (Music a))
     | Stack (List (Music a))
     | Modify Control (Music a)
+
+
+
+{-
+   > music = sequence [c 3 hn, d 3 qn]
+   Sequence [Prim (Note (R 1 2) (C,3)),Prim (Note (R 1 4) (D,3))]
+       : Music ( PitchClass, number )
+   > eventArrayOfPrimitives 60 (flatten music)
+   [{ duration = "0.25", note = "D3", time = "0.5" },{ duration = "0.5", note = "C3", time = "0" }]
+
+-}
+
+
+flatten : Music a -> List (Primitive a)
+flatten music =
+    case music of
+        Prim p ->
+            [ p ]
+
+        Sequence list ->
+            List.map flatten list |> List.concat
+
+        Stack s ->
+            []
+
+        Modify _ _ ->
+            []
 
 
 {-| Incomplete. See HSM p. 32
