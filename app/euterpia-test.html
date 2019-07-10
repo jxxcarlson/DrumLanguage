@@ -14,16 +14,12 @@
         node: document.getElementById('elm')
       });
 
-      var bpm = 120
-
 
       app.ports.sendMusic.subscribe(function(eventArray) {
 
         console.log("JSON: " + JSON.stringify(eventArray))
 
-        console.log("Play at " + bpm + " bpm")
         var synth = new Tone.Synth().toMaster()
-        //pass in an array of events
         var part = new Tone.Part(function(time, event){
         	  synth.triggerAttackRelease(event.note, event.dur, time)
           }, eventArray
@@ -32,8 +28,6 @@
         part.start(Tone.now())
         part.loop = 0
         part.loopEnd = '1m'
-
-        Tone.Transport.bpm.value = bpm
         Tone.Transport.start();
 
       })
@@ -44,12 +38,8 @@
 
         console.log("ARGS: " + args)
 
-        if (args[0] == "tempo") {
-           console.log("tempo = " + args[1] + " bpm")
-           bpm = parseInt(args[1])
-           Tone.Transport.bpm.value = bpm
-        } else if (args[0] == "stop") {
-        Tone.Transport.cancel();
+        if (args[0] == "stop") {
+           Tone.Transport.cancel();
         }
 
       })
