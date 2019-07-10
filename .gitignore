@@ -5,4 +5,4 @@ audio/
 package-lock.json
 app/Drum.js
 Example.js
-Euterpia.js
+app/EuterpiaTest.js
