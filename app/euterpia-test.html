@@ -29,9 +29,10 @@
           }, eventArray
         )
 
-        part.start(0)
-        part.loop = 0
-        part.loopEnd = '8m'
+      part.start(Tone.now())
+      part.loop = 0
+        part.loopEnd = '1m'
+
 
         Tone.Transport.bpm.value = bpm
         Tone.Transport.start();
@@ -49,7 +50,7 @@
            bpm = parseInt(args[1])
            Tone.Transport.bpm.value = bpm
         } else if (args[0] == "stop") {
-          Tone.Transport.stop();
+        Tone.Transport.cancel();
         }
 
       })
