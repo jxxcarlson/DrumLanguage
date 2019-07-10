@@ -127,10 +127,20 @@ update msg model =
             ( model, Cmd.none )
 
         Sample1 ->
-            ( { model | voice1String = Songs.sample1TextVoice1, voice2String = Songs.sample1TextVoice2 }, Cmd.none )
+            ( { model
+                | voice1String = Songs.s1
+                , voice1Music = MusicParser.parseSequence Songs.s1 |> Result.toMaybe
+              }
+            , Cmd.none
+            )
 
         Sample2 ->
-            ( { model | voice1String = Songs.sample2TextVoice1, voice2String = Songs.sample2TextVoice2 }, Cmd.none )
+            ( { model
+                | voice1String = Songs.s2
+                , voice1Music = MusicParser.parseSequence Songs.s2 |> Result.toMaybe
+              }
+            , Cmd.none
+            )
 
         ReadVoice1 str ->
             ( { model | voice1String = str, voice1Music = MusicParser.parseSequence str |> Result.toMaybe }, Cmd.none )
