@@ -39,7 +39,6 @@ type alias Model =
     , voice2String : String
     , voice1Music : Maybe (Music Pitch)
     , voice2Music : Maybe (Music Pitch)
-    , music : Maybe (Music Pitch)
     , bpmString : String
     }
 
@@ -55,7 +54,6 @@ init flags =
       , voice1Music = MusicParser.parseSequence v1Init |> Result.toMaybe
       , voice2Music = Nothing
       , bpmString = "80"
-      , music = MusicParser.parseSequence v1Init |> Result.toMaybe
       }
     , Cmd.none
     )
@@ -155,7 +153,7 @@ update msg model =
                     "XX"
 
                 sendMusicCmd =
-                    case model.music of
+                    case model.voice1Music of
                         Just music_ ->
                             sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic 80 <| music_
 
@@ -200,7 +198,8 @@ mainColumn model =
         [ column [ centerX, spacing 20 ]
             [ title "Euterpia Test"
             , readVoice1 model
-            , readVoice2 model
+
+            --, readVoice2 model
             , appButtons model
             , newTabLink [ centerX, Font.size 12 ]
                 { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
