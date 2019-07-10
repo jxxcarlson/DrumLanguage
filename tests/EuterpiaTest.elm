@@ -1,4 +1,4 @@
-module Example exposing (basicTestMusic, testRational)
+module EuterpiaTest exposing (basicTestMusic, testRational)
 
 import Duration exposing (..)
 import Expect exposing (Expectation)

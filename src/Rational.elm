@@ -10,6 +10,7 @@ module Rational exposing
     , project
     , realValue
     , reduce
+    , stringValue
     , sub
     , sum
     , zero
@@ -18,6 +19,11 @@ module Rational exposing
 
 type Rational
     = R Int Int
+
+
+stringValue : Rational -> String
+stringValue (R a_ b_) =
+    String.fromInt a_ ++ "/" ++ String.fromInt b_
 
 
 zero : Rational

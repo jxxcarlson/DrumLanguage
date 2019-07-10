@@ -1,4 +1,4 @@
-module Duration exposing (Duration, bn, ddhn, ddqn, den, dhn, dqn, dsn, dtn, dwn, en, hn, qn, sfn, sn, wn)
+module Duration exposing (Duration, bn, dden, ddhn, ddqn, den, dhn, dqn, dsn, dtn, dwn, en, hn, qn, sfn, sn, tn, wn)
 
 import Rational exposing (Rational(..))
 
@@ -28,6 +28,10 @@ en =
 
 
 sn =
+    R 1 16
+
+
+tn =
     R 1 32
 
 

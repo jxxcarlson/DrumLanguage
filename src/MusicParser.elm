@@ -1,6 +1,7 @@
-module MusicParser exposing (noteParser)
+module MusicParser exposing (parseSequence, primParser, sequenceParser)
 
 import Duration exposing (Duration)
+import Music exposing (Music(..))
 import Parser exposing (..)
 import Pitch exposing (Pitch, PitchClass(..))
 import Primitive exposing (Primitive(..))
@@ -11,6 +12,66 @@ type Noot
     = N Pitch Duration
 
 
+{-|
+
+> parseSequence "c 3 qn, d 3 qn, qnr, g 3 hn"
+> Ok (Sequence [Prim (Note (R 1 4) (C,3)),Prim (Note (R 1 4) (D,3)),Prim (Rest (R 1 4)),Prim (Note (R 1 2) (G,3))])
+
+    : Result (List Parser.DeadEnd) (Music Pitch.Pitch)
+
+-}
+parseSequence : String -> Result (List DeadEnd) (Music Pitch)
+parseSequence str =
+    run sequenceParser (String.replace "," " " str)
+
+
+{-|
+
+> run primParser "c 8 en"
+> Ok (Prim (Note (R 1 8) (C,8)))
+
+> run primParser "denr"
+> Ok (Prim (Rest (R 3 16)))
+
+-}
+primParser : Parser (Music Pitch)
+primParser =
+    primitiveParser |> map Prim
+
+
+{-|
+
+> run sequenceParser "c 3 qn d 3 qn wnr g 3 wn"
+> Ok (Sequence [Prim (Note (R 1 4) (C,3)),Prim (Note (R 1 4) (D,3)),Prim (Rest (R 1 1)),Prim (Note (R 1 1) (G,3))])
+
+-}
+sequenceParser : Parser (Music Pitch)
+sequenceParser =
+    many primParser
+        |> map Sequence
+
+
+
+--
+--
+--
+
+
+primitiveParser : Parser (Primitive Pitch)
+primitiveParser =
+    succeed identity
+        |= oneOf [ restParser, noteParser ]
+        |. spaces
+
+
+{-|
+
+> run noteParser "c 4 en"
+> Ok (Note (R 1 8) (C,4))
+
+    : Result (List Parser.DeadEnd) (Primitive.Primitive Pitch.Pitch)
+
+-}
 noteParser : Parser (Primitive Pitch)
 noteParser =
     (succeed N
@@ -19,6 +80,16 @@ noteParser =
         |= durationParser
     )
         |> map (\(N p d) -> Note d p)
+
+
+restParser : Parser (Primitive Pitch)
+restParser =
+    (getChompedString <|
+        succeed ()
+            |. oneOf [ symbol "bnr", symbol "ddhnr", symbol "ddqnr", symbol "ddenr", symbol "denr", symbol "dhn", symbol "dqnr", symbol "dsnr", symbol "dtnr", symbol "dwnr", symbol "enr", symbol "hnr", symbol "qnr", symbol "sfnr", symbol "snr", symbol "wnr" ]
+    )
+        |> map durationOfRestString
+        |> map (\dur -> Rest dur)
 
 
 {-|
@@ -166,6 +237,11 @@ pitchClassOfString str =
             Bss
 
 
+durationOfRestString : String -> Duration
+durationOfRestString str =
+    durationOfString (String.replace "r" "" str)
+
+
 durationOfString : String -> Duration
 durationOfString str =
     case str of
@@ -226,3 +302,23 @@ durationOfString str =
 
 
 --- |= oneOf [ symbol "cff", symbol "cf", symbol "c", symbol "dff", symbol "cs", symbol "df", symbol "css", symbol "d", symbol "eff", symbol "ds", symbol "ef", symbol "fff", symbol "dss", symbol "e", symbol "ff", symbol "es", symbol "f", symbol "gff", symbol "ess", symbol "fs", symbol "gf", symbol "fss", symbol "g", symbol "aff", symbol "gs", symbol "af", symbol "gss", symbol "a", symbol "bff", symbol "as", symbol "bf", symbol "ass", symbol "b", symbol "bs", symbol "bss" ]
+--
+-- Helpers
+--
+
+
+{-| Apply a parser zero or more times and return a list of the results.
+-}
+many : Parser a -> Parser (List a)
+many p =
+    loop [] (manyHelp p)
+
+
+manyHelp : Parser a -> List a -> Parser (Step (List a) (List a))
+manyHelp p vs =
+    oneOf
+        [ succeed (\v -> Loop (v :: vs))
+            |= p
+        , succeed ()
+            |> map (\_ -> Done (List.reverse vs))
+        ]

@@ -1,1 +1,1 @@
-elm make --optimize Example.elm  --output=Example.js
+elm make --debug EuterpiaTest.elm  --output=EuterpiaTest.js

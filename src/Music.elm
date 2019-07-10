@@ -418,6 +418,66 @@ dss o d_ =
     note d_ ( Dss, o )
 
 
+bnr =
+    rest bn
+
+
+wnr =
+    rest wn
+
+
+hnr =
+    rest hn
+
+
+qnr =
+    rest qn
+
+
+enr =
+    rest en
+
+
+tnr =
+    rest tn
+
+
+sfnr =
+    rest sfn
+
+
+dwnr =
+    rest dwn
+
+
+dhnr =
+    rest dhn
+
+
+dqnr =
+    rest dqn
+
+
+denr =
+    rest den
+
+
+dsnr =
+    rest dsn
+
+
+dtnr =
+    rest dtn
+
+
+ddhnr =
+    rest ddhn
+
+
+ddenr =
+    rest dden
+
+
 
 --
 

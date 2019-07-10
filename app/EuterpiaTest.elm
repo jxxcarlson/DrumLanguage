@@ -16,8 +16,11 @@ import Html exposing (Html)
 import Http
 import Json.Encode as Encode
 import Music exposing (..)
+import MusicParser
+import Parser
 import Phoneme
 import Pitch exposing (Pitch)
+import Rational
 import Songs
 import ToneJSPlayer
 
@@ -34,11 +37,28 @@ main =
 type alias Model =
     { voice1String : String
     , voice2String : String
-    , notesForVoice1 : String
-    , notesForVoice2 : String
-    , music : Music Pitch
+    , voice1Music : Maybe (Music Pitch)
+    , voice2Music : Maybe (Music Pitch)
+    , music : Maybe (Music Pitch)
     , bpmString : String
     }
+
+
+v1Init =
+    "c 3 qn, e 3 qn, g 3 qn, d 4 hn, c 4 wn"
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( { voice1String = v1Init
+      , voice2String = ""
+      , voice1Music = MusicParser.parseSequence v1Init |> Result.toMaybe
+      , voice2Music = Nothing
+      , bpmString = "80"
+      , music = MusicParser.parseSequence v1Init |> Result.toMaybe
+      }
+    , Cmd.none
+    )
 
 
 dMinor =
@@ -80,7 +100,6 @@ type Msg
     | Stop
       --| Tempo Int
     | SetTempo
-    | Instructions
     | Sample1
     | Sample2
 
@@ -93,19 +112,6 @@ port sendMusic : Encode.Value -> Cmd msg
 
 
 port sendCommand : String -> Cmd msg
-
-
-init : Flags -> ( Model, Cmd Msg )
-init flags =
-    ( { voice1String = ""
-      , voice2String = ""
-      , notesForVoice1 = ""
-      , notesForVoice2 = ""
-      , bpmString = "80"
-      , music = arp1
-      }
-    , Cmd.none
-    )
 
 
 
@@ -122,9 +128,6 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        Instructions ->
-            ( { model | voice1String = Songs.initialTextVoice1, voice2String = Songs.initialTextVoice2 }, Cmd.none )
-
         Sample1 ->
             ( { model | voice1String = Songs.sample1TextVoice1, voice2String = Songs.sample1TextVoice2 }, Cmd.none )
 
@@ -132,10 +135,10 @@ update msg model =
             ( { model | voice1String = Songs.sample2TextVoice1, voice2String = Songs.sample2TextVoice2 }, Cmd.none )
 
         ReadVoice1 str ->
-            ( { model | voice1String = str }, Cmd.none )
+            ( { model | voice1String = str, voice1Music = MusicParser.parseSequence str |> Result.toMaybe }, Cmd.none )
 
         ReadVoice2 str ->
-            ( { model | voice2String = str }, Cmd.none )
+            ( { model | voice2String = str, voice2Music = MusicParser.parseSequence str |> Result.toMaybe }, Cmd.none )
 
         InputBPM str ->
             ( { model | bpmString = str }, Cmd.none )
@@ -150,11 +153,19 @@ update msg model =
 
                 noteList2 =
                     "XX"
+
+                sendMusicCmd =
+                    case model.music of
+                        Just music_ ->
+                            sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic 80 <| music_
+
+                        Nothing ->
+                            Cmd.none
             in
             ( model
             , Cmd.batch
                 [ sendCommand <| "tempo:" ++ model.bpmString
-                , sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic 80 <| model.music
+                , sendMusicCmd
                 ]
             )
 
@@ -187,7 +198,7 @@ mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
         [ column [ centerX, spacing 20 ]
-            [ title "Techno Drum Language App"
+            [ title "Euterpia Test"
             , readVoice1 model
             , readVoice2 model
             , appButtons model
@@ -204,24 +215,19 @@ title str =
     row [ centerX, Font.bold, Font.size 24 ] [ text str ]
 
 
-displayVoice : String -> Element msg
-displayVoice notes =
+displayVoice : Maybe (Music Pitch) -> Element msg
+displayVoice music =
     let
-        noteList =
-            Phoneme.toPitchNameList notes
+        message =
+            case Maybe.map Music.duration music of
+                Nothing ->
+                    "Parser error"
 
-        noteLisAsString =
-            String.join " " (List.take 20 noteList)
-
-        tag =
-            if List.length noteList > 20 then
-                " ..."
-
-            else
-                ""
+                Just dur ->
+                    "Duration: " ++ Rational.stringValue dur
     in
     row [ centerX, Font.size 11 ]
-        [ text <| "beats: " ++ String.fromInt (List.length noteList) ++ ", notes: " ++ noteLisAsString ++ tag ]
+        [ text <| message ]
 
 
 readVoice1 : Model -> Element Msg
@@ -235,7 +241,7 @@ readVoice1 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice model.voice1String
+        , displayVoice model.voice1Music
         ]
 
 
@@ -250,7 +256,7 @@ readVoice2 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice model.voice2String
+        , displayVoice model.voice1Music
         ]
 
 
@@ -267,8 +273,7 @@ inputBPM model =
 appButtons : Model -> Element Msg
 appButtons model =
     row [ centerX, spacing 20 ]
-        [ instructionsButton
-        , sampleButton1
+        [ sampleButton1
         , sampleButton2
         , Input.button buttonStyle
             { onPress = Just Play
@@ -280,13 +285,6 @@ appButtons model =
             }
         , inputBPM model
         ]
-
-
-instructionsButton =
-    Input.button buttonStyle
-        { onPress = Just Instructions
-        , label = el [ centerX, centerY ] (text "Instructions")
-        }
 
 
 sampleButton1 =
