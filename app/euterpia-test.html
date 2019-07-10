@@ -29,8 +29,8 @@
           }, eventArray
         )
 
-        part.start(0)
-        part.loop = 1
+      part.start(Tone.now())
+      part.loop = 0
         part.loopEnd = '1m'
 
         Tone.Transport.bpm.value = bpm
