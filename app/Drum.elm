@@ -7,6 +7,7 @@ port module Drum exposing (main)
 -}
 
 import Browser
+import DrumSongs
 import Element exposing (..)
 import Element.Background as Background
 import Element.Font as Font
@@ -16,7 +17,6 @@ import Http
 import Json.Encode as Encode
 import Phoneme
 import Player
-import Songs
 
 
 main =
@@ -69,8 +69,8 @@ port sendCommand : String -> Cmd msg
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { voice1String = Songs.initialTextVoice1
-      , voice2String = Songs.initialTextVoice2
+    ( { voice1String = DrumSongs.initialTextVoice1
+      , voice2String = DrumSongs.initialTextVoice2
       , notesForVoice1 = ""
       , notesForVoice2 = ""
       , bpmString = "165"
@@ -94,13 +94,13 @@ update msg model =
             ( model, Cmd.none )
 
         Instructions ->
-            ( { model | voice1String = Songs.initialTextVoice1, voice2String = Songs.initialTextVoice2 }, Cmd.none )
+            ( { model | voice1String = DrumSongs.initialTextVoice1, voice2String = DrumSongs.initialTextVoice2 }, Cmd.none )
 
         Sample1 ->
-            ( { model | voice1String = Songs.sample1TextVoice1, voice2String = Songs.sample1TextVoice2 }, Cmd.none )
+            ( { model | voice1String = DrumSongs.sample1TextVoice1, voice2String = DrumSongs.sample1TextVoice2 }, Cmd.none )
 
         Sample2 ->
-            ( { model | voice1String = Songs.sample2TextVoice1, voice2String = Songs.sample2TextVoice2 }, Cmd.none )
+            ( { model | voice1String = DrumSongs.sample2TextVoice1, voice2String = DrumSongs.sample2TextVoice2 }, Cmd.none )
 
         ReadVoice1 str ->
             ( { model | voice1String = str }, Cmd.none )
