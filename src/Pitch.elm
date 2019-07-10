@@ -64,7 +64,7 @@ stringOfPitch ( pitchClass, octave ) =
 
 tjsStringOfPitch : Pitch -> String
 tjsStringOfPitch ( pitchClass, octave ) =
-    stringOfPitchClass pitchClass ++ String.fromInt octave
+    tjsStringOfPitchClass pitchClass ++ String.fromInt octave
 
 
 stringOfPitchClass : PitchClass -> String
@@ -180,7 +180,7 @@ tjsStringOfPitchClass : PitchClass -> String
 tjsStringOfPitchClass pitchClass =
     case pitchClass of
         Cff ->
-            "C##"
+            "Bb"
 
         Cf ->
             "Cb"
@@ -189,7 +189,7 @@ tjsStringOfPitchClass pitchClass =
             "C"
 
         Dff ->
-            "D##"
+            "C"
 
         Cs ->
             "C#"
@@ -198,13 +198,13 @@ tjsStringOfPitchClass pitchClass =
             "Db"
 
         Css ->
-            "C##"
+            "D"
 
         D ->
             "D"
 
         Eff ->
-            "Ebb"
+            "D"
 
         Ds ->
             "D#"
@@ -213,10 +213,10 @@ tjsStringOfPitchClass pitchClass =
             "Eb"
 
         Fff ->
-            "F##"
+            "Eb"
 
         Dss ->
-            "D##"
+            "E"
 
         E ->
             "E"
@@ -231,10 +231,10 @@ tjsStringOfPitchClass pitchClass =
             "F"
 
         Gff ->
-            "Gbb"
+            "F"
 
         Ess ->
-            "E##"
+            "F#"
 
         Fs ->
             "F#"
@@ -243,13 +243,13 @@ tjsStringOfPitchClass pitchClass =
             "Gb"
 
         Fss ->
-            "F##"
+            "G"
 
         G ->
             "G"
 
         Aff ->
-            "Abb"
+            "G"
 
         Gs ->
             "G#"
@@ -258,13 +258,13 @@ tjsStringOfPitchClass pitchClass =
             "Ab"
 
         Gss ->
-            "G##"
+            "A"
 
         A ->
             "A"
 
         Bff ->
-            "Bbb"
+            "A"
 
         As ->
             "A#"
@@ -273,13 +273,13 @@ tjsStringOfPitchClass pitchClass =
             "Bb"
 
         Ass ->
-            "A##"
+            "B"
 
         B ->
             "B"
 
         Bs ->
-            "B#"
+            "C"
 
         Bss ->
-            "B##"
+            "C#"
