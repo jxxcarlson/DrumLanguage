@@ -165,7 +165,7 @@ update msg model =
                 sendMusicCmd =
                     case model.voice1Music of
                         Just music_ ->
-                            sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic 80 <| music_
+                            sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic (bpm model) <| music_
 
                         Nothing ->
                             Cmd.none
@@ -338,3 +338,14 @@ buttonStyle =
     , Font.size 16
     , paddingXY 15 8
     ]
+
+
+
+--
+-- HELPERS
+--
+
+
+bpm : Model -> Int
+bpm model =
+    String.toInt model.bpmString |> Maybe.withDefault 120
