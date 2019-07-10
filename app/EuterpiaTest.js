@@ -6540,8 +6540,6 @@ var author$project$Example$init = function (flags) {
 	return _Utils_Tuple2(
 		{
 			bpmString: '80',
-			music: elm$core$Result$toMaybe(
-				author$project$MusicParser$parseSequence(author$project$Example$v1Init)),
 			voice1Music: elm$core$Result$toMaybe(
 				author$project$MusicParser$parseSequence(author$project$Example$v1Init)),
 			voice1String: author$project$Example$v1Init,
@@ -6962,7 +6960,7 @@ var author$project$Example$update = F2(
 					author$project$Example$sendCommand('tempo:' + model.bpmString));
 			case 'Play':
 				var sendMusicCmd = function () {
-					var _n1 = model.music;
+					var _n1 = model.voice1Music;
 					if (_n1.$ === 'Just') {
 						var music_ = _n1.a;
 						return author$project$Example$sendMusic(
@@ -13605,51 +13603,6 @@ var author$project$Example$readVoice1 = function (model) {
 				author$project$Example$displayVoice(model.voice1Music)
 			]));
 };
-var author$project$Example$ReadVoice2 = function (a) {
-	return {$: 'ReadVoice2', a: a};
-};
-var author$project$Example$readVoice2 = function (model) {
-	return A2(
-		mdgriffith$elm_ui$Element$column,
-		_List_fromArray(
-			[
-				mdgriffith$elm_ui$Element$spacing(8)
-			]),
-		_List_fromArray(
-			[
-				A2(
-				mdgriffith$elm_ui$Element$el,
-				_List_fromArray(
-					[
-						mdgriffith$elm_ui$Element$Font$bold,
-						mdgriffith$elm_ui$Element$Font$size(14)
-					]),
-				mdgriffith$elm_ui$Element$text('Voice 2')),
-				A2(
-				mdgriffith$elm_ui$Element$Input$multiline,
-				_List_fromArray(
-					[
-						mdgriffith$elm_ui$Element$width(
-						mdgriffith$elm_ui$Element$px(700)),
-						mdgriffith$elm_ui$Element$height(
-						mdgriffith$elm_ui$Element$px(200))
-					]),
-				{
-					label: A2(
-						mdgriffith$elm_ui$Element$Input$labelLeft,
-						_List_Nil,
-						A2(
-							mdgriffith$elm_ui$Element$el,
-							_List_Nil,
-							mdgriffith$elm_ui$Element$text(''))),
-					onChange: author$project$Example$ReadVoice2,
-					placeholder: elm$core$Maybe$Nothing,
-					spellcheck: false,
-					text: model.voice2String
-				}),
-				author$project$Example$displayVoice(model.voice1Music)
-			]));
-};
 var author$project$Example$title = function (str) {
 	return A2(
 		mdgriffith$elm_ui$Element$row,
@@ -13723,7 +13676,6 @@ var author$project$Example$mainColumn = function (model) {
 					[
 						author$project$Example$title('Euterpia Test'),
 						author$project$Example$readVoice1(model),
-						author$project$Example$readVoice2(model),
 						author$project$Example$appButtons(model),
 						A2(
 						mdgriffith$elm_ui$Element$newTabLink,
