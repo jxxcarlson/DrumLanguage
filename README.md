@@ -5,8 +5,7 @@ useless [Techno Drum App](https://jxxcarlson.github.io/app/drumlanguage.html) (s
 (2) Implement as much of
 the basic functionality of *Euterpia*, the music composition system created by
 Paul Hudak (see *The Haskell School of Music*).  As the name indicates,
-the system is written in Haskell, and one uses it to write music directly
-in that language.
+the system is written in Haskell, and one uses it to write music directly.
 (3) implement a player interface for elm-euterpia (as we might call it) to
 a javascript music player system.  It seems that `Tone.js` is a good candidate.
 MIDI should also be added (in and out).
