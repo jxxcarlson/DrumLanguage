@@ -49,7 +49,7 @@
            bpm = parseInt(args[1])
            Tone.Transport.bpm.value = bpm
         } else if (args[0] == "stop") {
-        Tone.Transport.pause();
+        Tone.Transport.cancel();
         }
 
       })
