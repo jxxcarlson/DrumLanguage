@@ -42,7 +42,9 @@
         if (args[0] == "stop") {
            Tone.Transport.cancel();
         }
-
+      else if (args[0] == "duration") {
+        Tone.Transport.stop(args[1]);
+      }
       })
 
   </script>

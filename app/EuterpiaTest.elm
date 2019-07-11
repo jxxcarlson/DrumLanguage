@@ -165,16 +165,24 @@ update msg model =
                 sendMusicCmd =
                     case model.voice1Music of
                         Just music_ ->
-                            sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic (bpm model) <| music_
+                            Cmd.batch
+                                [ sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic (bpm model) <| music_
+                                , sendCommand <| "tempo:" ++ model.bpmString
+                                , sendCommand <|
+                                    "duration:"
+                                        ++ (music_
+                                                |> Music.duration
+                                                |> Rational.realValue
+                                                |> (*) (model |> bpm |> toFloat |> (*) 60)
+                                                |> String.fromFloat
+                                           )
+                                ]
 
                         Nothing ->
                             Cmd.none
             in
             ( model
-            , Cmd.batch
-                [ sendCommand <| "tempo:" ++ model.bpmString
-                , sendMusicCmd
-                ]
+            , sendMusicCmd
             )
 
         Stop ->
