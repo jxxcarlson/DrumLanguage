@@ -1,4 +1,4 @@
-module ToneJSPlayer exposing (encodeEventList, eventListOfMusic)
+module ToneJSPlayer exposing (encodeEventList, encodeParts, eventListOfMusic)
 
 import Duration exposing (Duration)
 import Json.Encode as Encode
@@ -57,6 +57,14 @@ encodeEvent event =
 encodeEventList : List Event -> Encode.Value
 encodeEventList eventList =
     Encode.list encodeEvent eventList
+
+
+encodeParts : List (List Event) -> Encode.Value
+encodeParts parts =
+    Encode.object
+        [ ( "numberOfParts", Encode.int (List.length parts) )
+        , ( "parts", Encode.list encodeEventList parts )
+        ]
 
 
 realTime : Rate -> Duration -> Float

@@ -15,6 +15,7 @@ import Element.Input as Input
 import Html exposing (Html)
 import Http
 import Json.Encode as Encode
+import Maybe.Extra
 import Music exposing (..)
 import MusicParser
 import Parser
@@ -156,42 +157,39 @@ update msg model =
 
         Play ->
             let
-                noteList1 =
-                    "XX"
-
-                noteList2 =
-                    "XX"
+                parts =
+                    Maybe.Extra.values [ model.voice1Music, model.voice2Music ]
 
                 sendMusicCmd =
-                    case model.voice1Music of
-                        Just music_ ->
-                            sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic (bpm model) <| music_
+                    sendMusic <| ToneJSPlayer.encodeParts <| List.map (ToneJSPlayer.eventListOfMusic (bpm model)) parts
 
-                        Nothing ->
-                            Cmd.none
+                --
+                -- case ( model.voice1Music, model.voice2Music ) of
+                --     ( Just music1, Just music2 ) ->
+                --         sendMusic <| preparePiece music1 music2
+                --
+                --     ( Just music1, Nothing ) ->
+                --         sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic (bpm model) <| music1
+                --
+                --     ( Nothing, Just music2 ) ->
+                --         sendMusic <| ToneJSPlayer.encodeEventList <| ToneJSPlayer.eventListOfMusic (bpm model) <| music2
+                --
+                --     ( Nothing, Nothing ) ->
+                --         Cmd.none
             in
             ( model
             , Cmd.batch
-                [ sendCommand <| "tempo:" ++ model.bpmString
-                , sendMusicCmd
-                ]
+                [ sendMusicCmd ]
             )
 
         Stop ->
             ( model
             , Cmd.batch
-                [ sendCommand "stop:now"
-
-                --, sendMusic <| Player.encodePiece Player.emptyPiece
-                ]
+                [ sendCommand "stop:now" ]
             )
 
 
 
---
--- Tempo bpm ->
---     ( model, sendCommand <| "tempo:" ++ String.fromInt bpm )
---
 --
 -- VIEW
 --
@@ -208,8 +206,7 @@ mainColumn model =
         [ column [ centerX, spacing 20 ]
             [ title "Euterpia Test"
             , readVoice1 model
-
-            --, readVoice2 model
+            , readVoice2 model
             , appButtons model
             , newTabLink [ centerX, Font.size 12 ]
                 { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
@@ -265,7 +262,7 @@ readVoice2 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice model.voice1Music
+        , displayVoice model.voice2Music
         ]
 
 

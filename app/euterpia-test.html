@@ -15,19 +15,40 @@
       });
 
 
-      app.ports.sendMusic.subscribe(function(eventArray) {
+      app.ports.sendMusic.subscribe(function(piece) {
 
-        console.log("JSON: " + JSON.stringify(eventArray))
 
-        var synth = new Tone.Synth().toMaster()
 
-        var part = new Tone.Part(function(time, event){
-        	  synth.triggerAttackRelease(event.note, event.dur, time)
-          }, eventArray
-        )
+        var numberOfParts = piece.numberOfParts
+        var parts = piece.parts
 
-        part.start() // See discussion of "No argument" in https://github.com/Tonejs/Tone.js/wiki/Time
-        part.loop = false
+        console.log("N: " + numberOfParts)
+        console.log("length of parts: " + parts.length)
+        // console.log("parts[0]: " + JSON.stringify(parts[0]))
+
+        var synthArray = []
+        var partArray = []
+        for (i = 0; i < numberOfParts; i++) {
+
+          var newSynth = new Tone.Synth().toMaster()
+
+          console.log("current part (" + i + "): " + JSON.stringify(parts[i]))
+
+          var newPart = new Tone.Part(function(time, event){
+              newSynth.triggerAttackRelease(event.note, event.dur, time)
+           }, parts[i]);
+
+          synthArray.push(newSynth)
+          partArray.push(newPart);
+        }
+
+        console.log("length of synth array : " + synthArray.length)
+        console.log("length of partArray : " + partArray.length)
+
+        for (i = 0; i < numberOfParts; i++) {
+          partArray[i].start()
+          partArray[i].loop = false
+        }
 
         Tone.Transport.start()
 
