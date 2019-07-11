@@ -20,15 +20,16 @@
         console.log("JSON: " + JSON.stringify(eventArray))
 
         var synth = new Tone.Synth().toMaster()
+
         var part = new Tone.Part(function(time, event){
         	  synth.triggerAttackRelease(event.note, event.dur, time)
           }, eventArray
         )
 
-        part.start(Tone.now())
-        part.loop = 0
-        part.loopEnd = '1m'
-        Tone.Transport.start();
+        part.start() // See discussion of "No argument" in https://github.com/Tonejs/Tone.js/wiki/Time
+        part.loop = false
+
+        Tone.Transport.start()
 
       })
 
