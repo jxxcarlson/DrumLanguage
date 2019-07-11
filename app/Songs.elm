@@ -6,4 +6,8 @@ s1 =
 
 
 s2 =
-    "c 3 hn, ef 3 hn, g 3 hn, bf 3 hn, c 4 bn"
+    "c 3 qn, e 3 qn, g 3 qn, d 4 qn | ds 4 qn, df 4 qn, c 4 wn"
+
+
+
+-- c 3 hn, e 3 hn, g 3 hn, b 3 hn, d 4 wn, c 4 bn

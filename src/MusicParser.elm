@@ -19,10 +19,16 @@ type Noot
 
     : Result (List Parser.DeadEnd) (Music Pitch.Pitch)
 
+We do some pre-processings: strip out commas and "bar lines",
+which are just visual conveniences for humans.
+
 -}
 parseSequence : String -> Result (List DeadEnd) (Music Pitch)
 parseSequence str =
-    run sequenceParser (String.replace "," " " str)
+    str
+        |> String.replace "," " "
+        |> String.replace "|" " "
+        |> run sequenceParser
 
 
 {-|
