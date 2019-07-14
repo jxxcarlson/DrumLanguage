@@ -157,6 +157,10 @@ gcd a b =
         gcd r a
 
 
-lcm : Int -> Int -> Int
+lcm : Int -> Int -> Maybe Int
 lcm a b =
-    (a * b) // gcd a b
+    if a /= 0 && b /= 0 then
+        Just <| (a * b) // gcd a b
+
+    else
+        Nothing

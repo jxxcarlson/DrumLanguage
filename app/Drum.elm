@@ -190,15 +190,19 @@ displayPeriod : Model -> Element Msg
 displayPeriod model =
     let
         n1 =
-            List.length (Phoneme.toPitchNameList model.notesForVoice1)
+            List.length <| Phoneme.toPitchNameList model.voice1String
 
         n2 =
-            List.length (Phoneme.toPitchNameList model.notesForVoice2)
-
-        lcm =
-            Rational.lcm (2 * n1) n2
+            List.length <| Phoneme.toPitchNameList model.voice2String
     in
-    el [] (text <| "Period: " ++ String.fromInt lcm)
+    case Rational.lcm (2 * n1) n2 of
+        Nothing ->
+            el [ Font.size 12, centerX ] (text <| "Period: --")
+
+        Just k ->
+            row [ centerX ]
+                [ el [ Font.size 12, centerX ] (text <| "Period: " ++ String.fromInt k)
+                ]
 
 
 title : String -> Element msg
@@ -206,12 +210,9 @@ title str =
     row [ centerX, Font.bold, Font.size 24 ] [ text str ]
 
 
-displayVoice : String -> String -> Element msg
-displayVoice label notes =
+displayVoice : String -> List String -> Element msg
+displayVoice label noteList =
     let
-        noteList =
-            Phoneme.toPitchNameList notes
-
         noteLisAsString =
             String.join " " (List.take 20 noteList)
 
@@ -237,7 +238,7 @@ readVoice1 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice "beats (quarters):" model.voice1String
+        , displayVoice "beats (quarters):" (Phoneme.toPitchNameList model.voice1String)
         ]
 
 
@@ -252,7 +253,7 @@ readVoice2 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice "beats (eighths):" model.voice2String
+        , displayVoice "beats (eighths):" (Phoneme.toPitchNameList model.voice2String)
         ]
 
 
