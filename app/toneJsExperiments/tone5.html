@@ -21,14 +21,14 @@
     var part = new Tone.Part(function(time, event){
        synth.triggerAttackRelease(event.note, event.dur, time)
        }, [{ time : 0, note : 'C4', dur : '4n'},
-          	{ time : {'4n' : 1}, note : 'E4', dur : '4n'},
-          	{ time : {'4n' : 2}, note : 'G4', dur : '4n'},
-          	{ time : {'4n' : 3}, note : 'B4', dur : '4n'},
+          	{ time : {'4n' : 1}, note : 'C4', dur : '4n'},
+          	{ time : {'4n' : 2}, note : 'E4', dur : '4n'},
+          	{ time : {'4n' : 3}, note : 'G4', dur : '4n'},
       ])
 
-    part.start(0)
-    part.loop = 1
-    part.loopEnd = '1m'
+    part.start()
+    part.loop = false
+    //part.loopEnd = '1m'
 
 
     document.querySelector('tone-play-toggle').addEventListener('change', e => Tone.Transport.toggle())

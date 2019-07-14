@@ -4,6 +4,7 @@ module Rational exposing
     , div
     , gcd
     , inject
+    , lcm
     , max
     , maxList
     , mul
@@ -154,3 +155,8 @@ gcd a b =
 
     else
         gcd r a
+
+
+lcm : Int -> Int -> Int
+lcm a b =
+    (a * b) // gcd a b

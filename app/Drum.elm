@@ -17,6 +17,7 @@ import Http
 import Json.Encode as Encode
 import Phoneme
 import Player
+import Rational
 
 
 main =
@@ -175,6 +176,7 @@ mainColumn model =
             [ title "Techno Drum Language App"
             , readVoice1 model
             , readVoice2 model
+            , displayPeriod model
             , appButtons model
             , newTabLink [ centerX, Font.size 12 ]
                 { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
@@ -184,13 +186,28 @@ mainColumn model =
         ]
 
 
+displayPeriod : Model -> Element Msg
+displayPeriod model =
+    let
+        n1 =
+            List.length (Phoneme.toPitchNameList model.notesForVoice1)
+
+        n2 =
+            List.length (Phoneme.toPitchNameList model.notesForVoice2)
+
+        lcm =
+            Rational.lcm (2 * n1) n2
+    in
+    el [] (text <| "Period: " ++ String.fromInt lcm)
+
+
 title : String -> Element msg
 title str =
     row [ centerX, Font.bold, Font.size 24 ] [ text str ]
 
 
-displayVoice : String -> Element msg
-displayVoice notes =
+displayVoice : String -> String -> Element msg
+displayVoice label notes =
     let
         noteList =
             Phoneme.toPitchNameList notes
@@ -206,7 +223,7 @@ displayVoice notes =
                 ""
     in
     row [ centerX, Font.size 11 ]
-        [ text <| "beats: " ++ String.fromInt (List.length noteList) ++ ", notes: " ++ noteLisAsString ++ tag ]
+        [ text <| label ++ " " ++ String.fromInt (List.length noteList) ++ ", notes: " ++ noteLisAsString ++ tag ]
 
 
 readVoice1 : Model -> Element Msg
@@ -220,7 +237,7 @@ readVoice1 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice model.voice1String
+        , displayVoice "beats (quarters):" model.voice1String
         ]
 
 
@@ -235,7 +252,7 @@ readVoice2 model =
             , label = Input.labelLeft [] <| el [] (text "")
             , spellcheck = False
             }
-        , displayVoice model.voice2String
+        , displayVoice "beats (eighths):" model.voice2String
         ]
 
 
