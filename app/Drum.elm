@@ -409,10 +409,10 @@ muteVoice1 model =
     let
         labelTitle =
             if List.member Voice1 model.voices then
-                "Play Voice 1"
+                "Active"
 
             else
-                "Mute Voice 1"
+                "Muted"
     in
     Input.button (activeButtonStyle2 (List.member Voice1 model.voices))
         { onPress = Just MuteVoice1
@@ -424,10 +424,10 @@ muteVoice2 model =
     let
         labelTitle =
             if List.member Voice2 model.voices then
-                "Play Voice 2"
+                "Active"
 
             else
-                "Mute Voice 2"
+                "Muted"
     in
     Input.button (activeButtonStyle2 (List.member Voice2 model.voices))
         { onPress = Just MuteVoice2
