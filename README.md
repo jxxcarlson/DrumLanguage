@@ -13,6 +13,21 @@ MIDI should also be added (in and out).
 The drum app is a very weak application of items (2) and (3).  It is
 first test case for the viability of this project. 
 
+
+**Notes on the Drum App**
+
+My approach was to map each letter a–z to a phonetic class, 
+then map phonetic classes to musical pitches. The phonetic class o
+f a, e, i, o, u is VOWEL. Consonants are divided into 
+various classes, e.g., m, n of type NASAL. Each class is 
+assigned a pitch, and so any string of characters is mapped 
+to a sequence of pitch names. For example, Hello is assigned 
+the sequence G3 G2 C3 C3 G2. Here the numerical part of a pitch 
+name refers to its octave. Thus G3 is one octave higher than G2. 
+The pitches used to represent the pitch classes are G2 C3, E3, 
+F3, G3, Bb3, D — a dominant ninth chord. This choice of 
+mapping makes the drumming sound relatively harmonious.
+
 **Notes**
 
 - I've added another test app: `./app/EuterpiaTest.elm`.

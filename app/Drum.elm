@@ -10,6 +10,7 @@ import Browser
 import DrumSongs
 import Element exposing (..)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
@@ -36,7 +37,13 @@ type alias Model =
     , bpmString : String
     , activeSample : ActiveSample
     , voices : List Voice
+    , appState : AppState
     }
+
+
+type AppState
+    = Playing
+    | Stopped
 
 
 type ActiveSample
@@ -91,6 +98,7 @@ init flags =
       , bpmString = "200"
       , activeSample = ActiveSampleNone
       , voices = [ Voice1, Voice2 ]
+      , appState = Stopped
       }
     , Cmd.none
     )
@@ -210,7 +218,8 @@ update msg model =
                     }
             in
             ( { model
-                | notesForVoice1 = noteList1 |> List.take 30 |> String.join " "
+                | appState = Playing
+                , notesForVoice1 = noteList1 |> List.take 30 |> String.join " "
                 , notesForVoice2 = noteList2 |> List.take 30 |> String.join " "
               }
             , Cmd.batch
@@ -220,7 +229,7 @@ update msg model =
             )
 
         Stop ->
-            ( model
+            ( { model | appState = Stopped }
             , Cmd.batch
                 [ sendCommand "stop:now"
 
@@ -306,7 +315,13 @@ readVoice1 : Model -> Element Msg
 readVoice1 model =
     column [ spacing 8 ]
         [ row [ Element.spacing 12 ] [ el [ Font.bold, Font.size 14 ] (text <| "Voice 1"), muteVoice1 model ]
-        , Input.multiline [ width (px 700), height (px 200) ]
+        , Input.multiline
+            [ width (px 700)
+            , height (px 200)
+            , Background.color (Element.rgb255 230 230 235)
+            , Border.width 1
+            , Border.color (rgb255 0 0 0)
+            ]
             { onChange = ReadVoice1
             , text = model.voice1String
             , placeholder = Nothing
@@ -321,7 +336,13 @@ readVoice2 : Model -> Element Msg
 readVoice2 model =
     column [ spacing 8 ]
         [ row [ Element.spacing 12 ] [ el [ Font.bold, Font.size 14 ] (text <| "Voice 2"), muteVoice2 model ]
-        , Input.multiline [ width (px 700), height (px 200) ]
+        , Input.multiline
+            [ width (px 700)
+            , height (px 200)
+            , Background.color (Element.rgb255 230 230 235)
+            , Border.width 1
+            , Border.color (rgb255 0 0 0)
+            ]
             { onChange = ReadVoice2
             , text = model.voice2String
             , placeholder = Nothing
@@ -348,11 +369,11 @@ appButtons model =
         [ instructionsButton model
         , sampleButton1 model
         , sampleButton2 model
-        , Input.button buttonStyle
+        , Input.button (activeButtonStyle (model.appState == Playing))
             { onPress = Just Play
             , label = el [ centerX, centerY ] (text "Play")
             }
-        , Input.button buttonStyle
+        , Input.button (activeButtonStyle (model.appState == Stopped))
             { onPress = Just Stop
             , label = el [ centerX, centerY ] (text "Stop")
             }
@@ -451,14 +472,14 @@ tempoButton =
 mainColumnStyle =
     [ centerX
     , centerY
-    , Background.color (rgb255 240 240 240)
+    , Background.color (rgb255 180 180 190)
     , width (px 800)
     , paddingXY 20 20
     ]
 
 
 buttonStyle =
-    [ Background.color (rgb255 40 40 40)
+    [ Background.color (rgb255 80 80 80)
     , Font.color (rgb255 255 255 255)
     , Font.size 16
     , paddingXY 15 8
@@ -466,7 +487,7 @@ buttonStyle =
 
 
 buttonStyleSelected =
-    [ Background.color (rgb255 160 40 40)
+    [ Background.color (rgb255 140 30 30)
     , Font.color (rgb255 255 255 255)
     , Font.size 16
     , paddingXY 15 8
@@ -474,7 +495,7 @@ buttonStyleSelected =
 
 
 buttonStyleSmall =
-    [ Background.color (rgb255 40 40 40)
+    [ Background.color (rgb255 80 80 80)
     , Font.color (rgb255 255 255 255)
     , Font.size 12
     , paddingXY 4 2
@@ -482,7 +503,7 @@ buttonStyleSmall =
 
 
 buttonStyleSelectedSmall =
-    [ Background.color (rgb255 160 40 40)
+    [ Background.color (rgb255 140 30 30)
     , Font.color (rgb255 255 255 255)
     , Font.size 12
     , paddingXY 4 2
