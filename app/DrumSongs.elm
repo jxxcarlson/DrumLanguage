@@ -29,21 +29,30 @@ Counted in eighth notes, the lengths are 72 and 11.  Thus the song
 repeats itself every 72 x 11 = 792 beats.
 """
 
-
 sample1TextVoice1 =
-    "What is si tahW is si sii sii,,,,"
+  "What is that,,,!!"
 
 
 sample1TextVoice2 =
-    ",,,,,,zzaawwattaazz"
+  ",,,,,,zzaa ww at ta azz"
 
+--sample1TextVoice1 =
+--    "What is si tahW is si sii sii,,,,"
 
 sample2TextVoice1 =
     "MississipiipississiM,,,,,,,,,,,,,,,,"
 
+--sample1TextVoice2 =
+--    ",,,,,,zzaawwattaazz"
+
+--,,,,,!!,,l,l,l,l,,,kkkk
+--b,b,b,b,,,,aakkllaa,,,kkll,,,,,,,
+
+
+
 
 sample2TextVoice2 =
-    "Wawacha,,,,"
+    "Wawacha,,,,VxxLaadxxVdaaL"
 
 
 

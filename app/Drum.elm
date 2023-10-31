@@ -13,7 +13,6 @@ import Element.Background as Background
 import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
-import Http
 import Json.Encode as Encode
 import Phoneme
 import Player
@@ -35,7 +34,20 @@ type alias Model =
     , notesForVoice1 : String
     , notesForVoice2 : String
     , bpmString : String
+    , activeSample : ActiveSample
+    , voices : List Voice
     }
+
+
+type ActiveSample
+    = ActiveSample1
+    | ActiveSample2
+    | ActiveSampleNone
+
+
+type Voice
+    = Voice1
+    | Voice2
 
 
 
@@ -56,6 +68,8 @@ type Msg
     | Instructions
     | Sample1
     | Sample2
+    | MuteVoice1
+    | MuteVoice2
 
 
 type alias Flags =
@@ -74,7 +88,9 @@ init flags =
       , voice2String = DrumSongs.initialTextVoice2
       , notesForVoice1 = ""
       , notesForVoice2 = ""
-      , bpmString = "165"
+      , bpmString = "200"
+      , activeSample = ActiveSampleNone
+      , voices = [ Voice1, Voice2 ]
       }
     , Cmd.none
     )
@@ -98,10 +114,46 @@ update msg model =
             ( { model | voice1String = DrumSongs.initialTextVoice1, voice2String = DrumSongs.initialTextVoice2 }, Cmd.none )
 
         Sample1 ->
-            ( { model | voice1String = DrumSongs.sample1TextVoice1, voice2String = DrumSongs.sample1TextVoice2 }, Cmd.none )
+            ( { model
+                | activeSample = ActiveSample1
+                , voice1String = DrumSongs.sample1TextVoice1
+                , voice2String = DrumSongs.sample1TextVoice2
+              }
+            , Cmd.none
+            )
 
         Sample2 ->
-            ( { model | voice1String = DrumSongs.sample2TextVoice1, voice2String = DrumSongs.sample2TextVoice2 }, Cmd.none )
+            ( { model
+                | activeSample = ActiveSample2
+                , voice1String = DrumSongs.sample2TextVoice1
+                , voice2String = DrumSongs.sample2TextVoice2
+              }
+            , Cmd.none
+            )
+
+        MuteVoice1 ->
+            ( { model
+                | voices =
+                    if List.member Voice1 model.voices then
+                        List.filter (\v -> v /= Voice1) model.voices
+
+                    else
+                        Voice1 :: model.voices
+              }
+            , Cmd.none
+            )
+
+        MuteVoice2 ->
+            ( { model
+                | voices =
+                    if List.member Voice2 model.voices then
+                        List.filter (\v -> v /= Voice2) model.voices
+
+                    else
+                        Voice2 :: model.voices
+              }
+            , Cmd.none
+            )
 
         ReadVoice1 str ->
             ( { model | voice1String = str }, Cmd.none )
@@ -117,21 +169,44 @@ update msg model =
 
         Play ->
             let
+                noteList1 : List String
                 noteList1 =
                     Phoneme.toPitchNameList model.voice1String
 
                 noteList2 =
                     Phoneme.toPitchNameList model.voice2String
 
+                part1 : Player.Part
                 part1 =
-                    Player.partFromMelody "4n" "0.8" noteList1
+                    if List.member Voice1 model.voices then
+                        Player.partFromMelody "4n" "0.8" noteList1
 
+                    else
+                        Player.partFromMelody "4n" "0.8" []
+
+                part2 : Player.Part
                 part2 =
-                    Player.partFromMelody "4n" "0.4" noteList2
+                    if List.member Voice2 model.voices then
+                        Player.partFromMelody "4n" "0.4" noteList2
+
+                    else
+                        Player.partFromMelody "4n" "0.4" []
+
+                parts =
+                    [ part1, part2 ]
+
+                voiceToPart : Voice -> Player.Part
+                voiceToPart voice =
+                    case voice of
+                        Voice1 ->
+                            part1
+
+                        Voice2 ->
+                            part2
 
                 piece =
                     { bpm = String.toInt model.bpmString |> Maybe.withDefault 72
-                    , parts = [ part1, part2 ]
+                    , parts = parts
                     }
             in
             ( { model
@@ -166,7 +241,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [ Background.color (rgb255 40 40 40) ] (mainColumn model)
+    Element.layoutWith { options = [ Element.focusStyle noFocus ] } [ Background.color (rgb255 40 40 40) ] (mainColumn model)
 
 
 mainColumn : Model -> Element Msg
@@ -230,7 +305,7 @@ displayVoice label noteList =
 readVoice1 : Model -> Element Msg
 readVoice1 model =
     column [ spacing 8 ]
-        [ el [ Font.bold, Font.size 14 ] (text <| "Voice 1")
+        [ row [ Element.spacing 12 ] [ el [ Font.bold, Font.size 14 ] (text <| "Voice 1"), muteVoice1 model ]
         , Input.multiline [ width (px 700), height (px 200) ]
             { onChange = ReadVoice1
             , text = model.voice1String
@@ -245,7 +320,7 @@ readVoice1 model =
 readVoice2 : Model -> Element Msg
 readVoice2 model =
     column [ spacing 8 ]
-        [ el [ Font.bold, Font.size 14 ] (text <| "Voice 2")
+        [ row [ Element.spacing 12 ] [ el [ Font.bold, Font.size 14 ] (text <| "Voice 2"), muteVoice2 model ]
         , Input.multiline [ width (px 700), height (px 200) ]
             { onChange = ReadVoice2
             , text = model.voice2String
@@ -270,9 +345,9 @@ inputBPM model =
 appButtons : Model -> Element Msg
 appButtons model =
     row [ centerX, spacing 20 ]
-        [ instructionsButton
-        , sampleButton1
-        , sampleButton2
+        [ instructionsButton model
+        , sampleButton1 model
+        , sampleButton2 model
         , Input.button buttonStyle
             { onPress = Just Play
             , label = el [ centerX, centerY ] (text "Play")
@@ -285,24 +360,78 @@ appButtons model =
         ]
 
 
-instructionsButton =
-    Input.button buttonStyle
+noFocus : Element.FocusStyle
+noFocus =
+    { borderColor = Nothing
+    , backgroundColor = Nothing
+    , shadow = Nothing
+    }
+
+
+instructionsButton model =
+    Input.button (activeButtonStyle (model.activeSample == ActiveSampleNone))
         { onPress = Just Instructions
         , label = el [ centerX, centerY ] (text "Instructions")
         }
 
 
-sampleButton1 =
-    Input.button buttonStyle
+activeButtonStyle predicate =
+    if predicate then
+        buttonStyleSelected
+
+    else
+        buttonStyle
+
+
+activeButtonStyle2 predicate =
+    if predicate then
+        buttonStyleSelectedSmall
+
+    else
+        buttonStyleSmall
+
+
+sampleButton1 model =
+    Input.button (activeButtonStyle (ActiveSample1 == model.activeSample))
         { onPress = Just Sample1
         , label = el [ centerX, centerY ] (text "Sample 1")
         }
 
 
-sampleButton2 =
-    Input.button buttonStyle
+sampleButton2 model =
+    Input.button (activeButtonStyle (ActiveSample2 == model.activeSample))
         { onPress = Just Sample2
         , label = el [ centerX, centerY ] (text "Sample 2")
+        }
+
+
+muteVoice1 model =
+    let
+        labelTitle =
+            if List.member Voice1 model.voices then
+                "Play Voice 1"
+
+            else
+                "Mute Voice 1"
+    in
+    Input.button (activeButtonStyle2 (List.member Voice1 model.voices))
+        { onPress = Just MuteVoice1
+        , label = el [ centerX, centerY ] (text labelTitle)
+        }
+
+
+muteVoice2 model =
+    let
+        labelTitle =
+            if List.member Voice2 model.voices then
+                "Play Voice 2"
+
+            else
+                "Mute Voice 2"
+    in
+    Input.button (activeButtonStyle2 (List.member Voice2 model.voices))
+        { onPress = Just MuteVoice2
+        , label = el [ centerX, centerY ] (text labelTitle)
         }
 
 
@@ -333,4 +462,28 @@ buttonStyle =
     , Font.color (rgb255 255 255 255)
     , Font.size 16
     , paddingXY 15 8
+    ]
+
+
+buttonStyleSelected =
+    [ Background.color (rgb255 160 40 40)
+    , Font.color (rgb255 255 255 255)
+    , Font.size 16
+    , paddingXY 15 8
+    ]
+
+
+buttonStyleSmall =
+    [ Background.color (rgb255 40 40 40)
+    , Font.color (rgb255 255 255 255)
+    , Font.size 12
+    , paddingXY 4 2
+    ]
+
+
+buttonStyleSelectedSmall =
+    [ Background.color (rgb255 160 40 40)
+    , Font.color (rgb255 255 255 255)
+    , Font.size 12
+    , paddingXY 4 2
     ]

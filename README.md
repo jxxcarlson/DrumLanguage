@@ -2,7 +2,7 @@
 
 This project has three aims.  (1) Implement the fun but totally
 useless [Techno Drum App](https://jxxcarlson.github.io/app/drumlanguage.html) (see `./app`).
-(2) Implement as much of
+(2) Implement some of
 the basic functionality of *Euterpia*, the music composition system created by
 Paul Hudak (see *The Haskell School of Music*).  As the name indicates,
 the system is written in Haskell, and one uses it to write music directly.
@@ -11,8 +11,7 @@ a javascript music player system.  It seems that `Tone.js` is a good candidate.
 MIDI should also be added (in and out).
 
 The drum app is a very weak application of items (2) and (3).  It is
-first test case for the viability of this project.  I plan some other
-demo apps which will more fully test the system as it develops.
+first test case for the viability of this project. 
 
 **Notes**
 
@@ -41,7 +40,7 @@ type Music a
     = Prim (Primitive a)
     | Sequence (List (Music a))
     | Stack (List (Music a))
-    | odify Control (Music a)
+    | Nodify Control (Music a)
 ```
 
 Compare this type definition to Hudack's,
