@@ -44,6 +44,7 @@ type alias Model =
 type AppState
     = Playing
     | Stopped
+    | Reset
 
 
 type ActiveSample
@@ -70,6 +71,7 @@ type Msg
     | InputBPM String
     | Play
     | Stop
+    | DoReset
       --| Tempo Int
     | SetTempo
     | Instructions
@@ -119,15 +121,22 @@ update msg model =
             ( model, Cmd.none )
 
         Instructions ->
-            ( { model | voice1String = DrumSongs.initialTextVoice1, voice2String = DrumSongs.initialTextVoice2 }, Cmd.none )
+            ( { model
+                | voice1String = DrumSongs.initialTextVoice1
+                , voice2String = DrumSongs.initialTextVoice2
+                , appState = Stopped
+              }
+            , sendCommand "stop:now"
+            )
 
         Sample1 ->
             ( { model
                 | activeSample = ActiveSample1
                 , voice1String = DrumSongs.sample1TextVoice1
                 , voice2String = DrumSongs.sample1TextVoice2
+                , appState = Stopped
               }
-            , Cmd.none
+            , sendCommand "stop:now"
             )
 
         Sample2 ->
@@ -135,8 +144,9 @@ update msg model =
                 | activeSample = ActiveSample2
                 , voice1String = DrumSongs.sample2TextVoice1
                 , voice2String = DrumSongs.sample2TextVoice2
+                , appState = Stopped
               }
-            , Cmd.none
+            , sendCommand "stop:now"
             )
 
         MuteVoice1 ->
@@ -176,57 +186,61 @@ update msg model =
             ( model, sendCommand <| "tempo:" ++ model.bpmString )
 
         Play ->
-            let
-                noteList1 : List String
-                noteList1 =
-                    Phoneme.toPitchNameList model.voice1String
+            if model.appState == Playing then
+                ( model, Cmd.none )
 
-                noteList2 =
-                    Phoneme.toPitchNameList model.voice2String
+            else
+                let
+                    noteList1 : List String
+                    noteList1 =
+                        Phoneme.toPitchNameList model.voice1String
 
-                part1 : Player.Part
-                part1 =
-                    if List.member Voice1 model.voices then
-                        Player.partFromMelody "4n" "0.8" noteList1
+                    noteList2 =
+                        Phoneme.toPitchNameList model.voice2String
 
-                    else
-                        Player.partFromMelody "4n" "0.8" []
+                    part1 : Player.Part
+                    part1 =
+                        if List.member Voice1 model.voices then
+                            Player.partFromMelody "4n" "0.8" noteList1
 
-                part2 : Player.Part
-                part2 =
-                    if List.member Voice2 model.voices then
-                        Player.partFromMelody "4n" "0.4" noteList2
+                        else
+                            Player.partFromMelody "4n" "0.8" []
 
-                    else
-                        Player.partFromMelody "4n" "0.4" []
+                    part2 : Player.Part
+                    part2 =
+                        if List.member Voice2 model.voices then
+                            Player.partFromMelody "4n" "0.4" noteList2
 
-                parts =
-                    [ part1, part2 ]
+                        else
+                            Player.partFromMelody "4n" "0.4" []
 
-                voiceToPart : Voice -> Player.Part
-                voiceToPart voice =
-                    case voice of
-                        Voice1 ->
-                            part1
+                    parts =
+                        [ part1, part2 ]
 
-                        Voice2 ->
-                            part2
+                    voiceToPart : Voice -> Player.Part
+                    voiceToPart voice =
+                        case voice of
+                            Voice1 ->
+                                part1
 
-                piece =
-                    { bpm = String.toInt model.bpmString |> Maybe.withDefault 72
-                    , parts = parts
-                    }
-            in
-            ( { model
-                | appState = Playing
-                , notesForVoice1 = noteList1 |> List.take 30 |> String.join " "
-                , notesForVoice2 = noteList2 |> List.take 30 |> String.join " "
-              }
-            , Cmd.batch
-                [ sendCommand <| "tempo:" ++ model.bpmString
-                , sendPiece <| Player.encodePiece piece
-                ]
-            )
+                            Voice2 ->
+                                part2
+
+                    piece =
+                        { bpm = String.toInt model.bpmString |> Maybe.withDefault 72
+                        , parts = parts
+                        }
+                in
+                ( { model
+                    | appState = Playing
+                    , notesForVoice1 = noteList1 |> List.take 30 |> String.join " "
+                    , notesForVoice2 = noteList2 |> List.take 30 |> String.join " "
+                  }
+                , Cmd.batch
+                    [ sendCommand <| "tempo:" ++ model.bpmString
+                    , sendPiece <| Player.encodePiece piece
+                    ]
+                )
 
         Stop ->
             ( { model | appState = Stopped }
@@ -236,6 +250,9 @@ update msg model =
                 --, sendPiece <| Player.encodePiece Player.emptyPiece
                 ]
             )
+
+        DoReset ->
+            ( { model | appState = Reset }, sendCommand "reset:now" )
 
 
 
@@ -376,6 +393,10 @@ appButtons model =
         , Input.button (activeButtonStyle (model.appState == Stopped))
             { onPress = Just Stop
             , label = el [ centerX, centerY ] (text "Stop")
+            }
+        , Input.button (activeButtonStyle (model.appState == Reset))
+            { onPress = Just DoReset
+            , label = el [ centerX, centerY ] (text "Reset")
             }
         , inputBPM model
         ]

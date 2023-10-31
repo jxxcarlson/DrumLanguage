@@ -19,6 +19,14 @@
       var synth0 = new Tone.MembraneSynth().toMaster();
       var synth1 = new Tone.MembraneSynth().toMaster();
 
+      var reset = function() {
+        Tone.Transport.cancel();
+        synth0.dispose()
+        synth1.dispose()
+        synth0 = new Tone.MembraneSynth().toMaster();
+        synth1 = new Tone.MembraneSynth().toMaster();
+      }
+
       app.ports.sendPiece.subscribe(function(piece) {
 
         var makeRest = function(str) {
@@ -67,7 +75,9 @@
            bpm = parseInt(args[1])
         } else if (args[0] == "stop") {
           Tone.Transport.cancel();
-        }
+        } else if (args[0] == "reset") {
+           reset()
+           }
 
       })
 
