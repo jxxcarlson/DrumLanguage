@@ -26,29 +26,34 @@ in quarter notes, while the second (here) is playing in eight notes.
 To my ear, Sample 2 is the most interesting.  Note that the two
 parts have lengths 36 and 11, in quarter and eight notes, respectively.
 Counted in eighth notes, the lengths are 72 and 11.  Thus the song
-repeats itself every 72 x 11 = 792 beats.
+repeats itself every 72 x 11 = 792 beats. (In general, the song length
+is the least common multiple of twice the length of part 1 and the
+length of part 2.)
 """
 
+
 sample1TextVoice1 =
-  "What is that,,,!!"
+    "What is that,,,!!"
 
 
 sample1TextVoice2 =
-  ",,,,,,zzaa ww at ta azz"
+    ",,,,,,zzaa ww at ta azz"
+
+
 
 --sample1TextVoice1 =
 --    "What is si tahW is si sii sii,,,,"
 
+
 sample2TextVoice1 =
     "MississipiipississiM,,,,,,,,,,,,,,,,"
 
+
+
 --sample1TextVoice2 =
 --    ",,,,,,zzaawwattaazz"
-
 --,,,,,!!,,l,l,l,l,,,kkkk
 --b,b,b,b,,,,aakkllaa,,,kkll,,,,,,,
-
-
 
 
 sample2TextVoice2 =
