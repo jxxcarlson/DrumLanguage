@@ -126,6 +126,7 @@ update msg model =
                 | voice1String = DrumSongs.initialTextVoice1
                 , voice2String = DrumSongs.initialTextVoice2
                 , appState = Stopped
+                , activeSample = ActiveSampleNone
               }
             , sendCommand "stop:now"
             )
@@ -295,10 +296,13 @@ mainColumn model =
             , readVoice2 model
             , displayPeriod model
             , appButtons model
-            , newTabLink [ alignLeft, Font.size 12, paddingXY 18 0 ]
-                { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
-                , label = el [ Font.size 14, Font.underline, Font.color <| Element.rgb 1 1 1 ] (text "Article")
-                }
+            , row [ Element.paddingXY 0 8, Element.spacing 24, Font.size 14 ]
+                [ newTabLink [ alignLeft, Font.size 12, paddingXY 18 0 ]
+                    { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
+                    , label = el [ Font.underline, Font.color Color.text ] (text "Article")
+                    }
+                , Element.el [ Font.size 14, paddingXY 36 0, Font.color (Color.gray 180) ] (Element.text "Try with good earphones or speaker.  You'll be surprised!")
+                ]
             ]
         ]
 
