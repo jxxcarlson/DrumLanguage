@@ -21,14 +21,14 @@ repetition, etc.
 
 initialTextVoice2 =
     """Note that there are two voices.  The first (above) is playing
-in quarter notes, while the second (here) is playing in eight notes.
+in quarter notes, while the second (here) is playing in eighth notes.
 
-To my ear, Sample 2 is the most interesting.  Note that the two
-parts have lengths 36 and 11, in quarter and eight notes, respectively.
-Counted in eighth notes, the lengths are 72 and 11.  Thus the song
-repeats itself every 72 x 11 = 792 beats. (In general, the song length
-is the least common multiple of twice the length of part 1 and the
-length of part 2.)
+To my ear, Sample 2 is the most interesting.  Note that the two parts
+have lengths 36 and 25, in quarter and eighth notes, respectively. Counted
+in eighth notes, the lengths are 72 and 25.  Thus the song repeats itself
+every 72 x 25 = 1800 eighth notes, or what is the same, every 900 quarter notes.
+(In general, the song length in eighth notes is the least common multiple of
+twice the length of part 1 and the length of part 2.)
 """
 
 
@@ -54,6 +54,11 @@ sample2TextVoice1 =
 --    ",,,,,,zzaawwattaazz"
 --,,,,,!!,,l,l,l,l,,,kkkk
 --b,b,b,b,,,,aakkllaa,,,kkll,,,,,,,
+{-
+   missi! missi! pipi!! missi!!,,,,,,,,,
+   ,,,,,,,,!!zz !!aa !! ww !! at ta ! azz !
+
+-}
 
 
 sample2TextVoice2 =

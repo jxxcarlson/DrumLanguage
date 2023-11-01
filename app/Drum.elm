@@ -15,10 +15,13 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
+import Html.Events
+import Json.Decode as Decode
 import Json.Encode as Encode
 import Phoneme
 import Player
 import Rational
+import Time
 
 
 main =
@@ -36,6 +39,9 @@ type alias Model =
     , notesForVoice1 : String
     , notesForVoice2 : String
     , bpmString : String
+    , bpm : Float
+    , beats : Int
+    , clockRunning : Bool
     , activeSample : ActiveSample
     , voices : List Voice
     , appState : AppState
@@ -67,6 +73,7 @@ type Voice
 
 type Msg
     = NoOp
+    | Beat Time.Posix
     | ReadVoice1 String
     | ReadVoice2 String
     | InputBPM String
@@ -99,6 +106,9 @@ init flags =
       , notesForVoice1 = ""
       , notesForVoice2 = ""
       , bpmString = "200"
+      , bpm = 200
+      , beats = 0
+      , clockRunning = False
       , activeSample = ActiveSampleNone
       , voices = [ Voice1, Voice2 ]
       , appState = Stopped
@@ -112,7 +122,7 @@ init flags =
 
 
 subscriptions model =
-    Sub.none
+    Time.every (1000 * 60 / model.bpm) Beat
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -121,11 +131,25 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        Beat _ ->
+            ( { model
+                | beats =
+                    if model.clockRunning then
+                        model.beats + 1
+
+                    else
+                        model.beats
+              }
+            , Cmd.none
+            )
+
         Instructions ->
             ( { model
                 | voice1String = DrumSongs.initialTextVoice1
                 , voice2String = DrumSongs.initialTextVoice2
                 , appState = Stopped
+                , clockRunning = False
+                , beats = 0
                 , activeSample = ActiveSampleNone
               }
             , sendCommand "stop:now"
@@ -137,6 +161,8 @@ update msg model =
                 , voice1String = DrumSongs.sample1TextVoice1
                 , voice2String = DrumSongs.sample1TextVoice2
                 , appState = Stopped
+                , clockRunning = False
+                , beats = 0
               }
             , sendCommand "stop:now"
             )
@@ -147,6 +173,8 @@ update msg model =
                 , voice1String = DrumSongs.sample2TextVoice1
                 , voice2String = DrumSongs.sample2TextVoice2
                 , appState = Stopped
+                , clockRunning = False
+                , beats = 0
               }
             , sendCommand "stop:now"
             )
@@ -154,6 +182,8 @@ update msg model =
         MuteVoice1 ->
             ( { model
                 | appState = Stopped
+                , clockRunning = False
+                , beats = 0
                 , voices =
                     if List.member Voice1 model.voices then
                         List.filter (\v -> v /= Voice1) model.voices
@@ -171,6 +201,8 @@ update msg model =
         MuteVoice2 ->
             ( { model
                 | appState = Stopped
+                , clockRunning = False
+                , beats = 0
                 , voices =
                     if List.member Voice2 model.voices then
                         List.filter (\v -> v /= Voice2) model.voices
@@ -192,10 +224,19 @@ update msg model =
             ( { model | voice2String = str }, Cmd.none )
 
         InputBPM str ->
-            ( { model | bpmString = str }, Cmd.none )
+            ( { model
+                | appState = Stopped
+                , clockRunning = False
+                , bpmString = str
+                , bpm = String.toFloat str |> Maybe.withDefault 72.0
+              }
+            , sendCommand "stop:now"
+            )
 
         SetTempo ->
-            ( model, sendCommand <| "tempo:" ++ model.bpmString )
+            ( { model | bpm = String.toFloat model.bpmString |> Maybe.withDefault 72.0 }
+            , sendCommand <| "tempo:" ++ adjustBPMString model.bpmString
+            )
 
         Play ->
             if model.appState == Playing then
@@ -245,37 +286,38 @@ update msg model =
                 in
                 ( { model
                     | appState = Playing
+                    , clockRunning = True
+                    , beats = 0
                     , notesForVoice1 = noteList1 |> List.take 30 |> String.join " "
                     , notesForVoice2 = noteList2 |> List.take 30 |> String.join " "
                   }
                 , Cmd.batch
-                    [ sendCommand <| "tempo:" ++ model.bpmString
+                    [ sendCommand <| "tempo:" ++ adjustBPMString model.bpmString
                     , sendPiece <| Player.encodePiece piece
                     ]
                 )
 
         Stop ->
-            ( { model | appState = Stopped }
-            , Cmd.batch
-                [ sendCommand "stop:now"
-
-                --, sendPiece <| Player.encodePiece Player.emptyPiece
-                ]
+            ( { model | appState = Stopped, clockRunning = False }
+            , sendCommand "stop:now"
             )
 
         DoReset ->
-            ( { model | appState = Reset }, sendCommand "reset:now" )
+            ( { model | appState = Reset, clockRunning = False }, sendCommand "reset:now" )
+
+
+adjustBPMString : String -> String
+adjustBPMString str =
+    str
+        |> String.toInt
+        |> Maybe.withDefault 72
+        |> toFloat
+        |> (\x -> x / 2)
+        |> String.fromFloat
 
 
 
---
--- Tempo bpm ->
---     ( model, sendCommand <| "tempo:" ++ String.fromInt bpm )
---
---
 -- VIEW
---
--- COLORS
 
 
 view : Model -> Html Msg
@@ -294,17 +336,23 @@ mainColumn model =
             [ title "Techno Drum Language App"
             , readVoice1 model
             , readVoice2 model
-            , displayPeriod model
+            , row [ Element.spacing 24, centerX ] [ displayPeriod model, displayClock model ]
             , appButtons model
             , row [ Element.paddingXY 0 8, Element.spacing 24, Font.size 14 ]
                 [ newTabLink [ alignLeft, Font.size 12, paddingXY 18 0 ]
                     { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
                     , label = el [ Font.underline, Font.color Color.text ] (text "Article")
                     }
-                , Element.el [ Font.size 14, paddingXY 36 0, Font.color (Color.gray 180) ] (Element.text "Try with good earphones or speaker.  You'll be surprised!")
+                , Element.el [ Font.size 14, Font.color (Color.gray 180) ] (Element.text "Try with good earphones or speaker.  You'll be surprised!")
+                , Element.el [ Font.size 14, Font.color (Color.gray 180) ] (Element.text "Period and beat count in quarter notes.")
                 ]
             ]
         ]
+
+
+displayClock : Model -> Element Msg
+displayClock model =
+    Element.el [ Font.size 12, Font.color Color.text ] (text <| "Page, Measure, Beat: " ++ String.fromInt (model.beats // (4 * 16)) ++ ", " ++ String.fromInt (model.beats // 4) ++ ", " ++ String.fromInt model.beats)
 
 
 displayPeriod : Model -> Element Msg
@@ -322,7 +370,7 @@ displayPeriod model =
 
         Just k ->
             row [ centerX ]
-                [ el [ Font.size 12, centerX ] (text <| "Period: " ++ String.fromInt k)
+                [ el [ Font.size 12, centerX ] (text <| "Period : " ++ String.fromInt (k // 2))
                 ]
 
 
@@ -391,12 +439,33 @@ readVoice2 model =
 
 inputBPM : Model -> Element Msg
 inputBPM model =
-    Input.text [ width (px 60), height (px 35), Font.size 16, Font.color Color.inputText ]
+    Input.text
+        [ width (px 60)
+        , height (px 35)
+        , Font.size 16
+        , Font.color Color.inputText
+        , Element.htmlAttribute <| Html.Events.on "keydown" (enterKeyDecoder SetTempo)
+        ]
         { onChange = InputBPM
         , text = model.bpmString
         , placeholder = Nothing
-        , label = Input.labelLeft [ Font.color Color.text ] <| el [ moveDown 10, paddingXY 4 0 ] (text "BPM")
+
+        --, label = Input.labelLeft [ Font.color Color.text ] <| el [ moveDown 10, paddingXY 4 0 ] (text "BPM")
+        , label = Input.labelHidden "BPM input"
         }
+
+
+enterKeyDecoder : Msg -> Decode.Decoder Msg
+enterKeyDecoder msg =
+    Html.Events.keyCode
+        |> Decode.andThen
+            (\code ->
+                if code == 13 then
+                    Decode.succeed msg
+
+                else
+                    Decode.fail "Not the Enter key"
+            )
 
 
 appButtons : Model -> Element Msg
