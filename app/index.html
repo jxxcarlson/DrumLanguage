@@ -75,9 +75,11 @@
            bpm = parseInt(args[1])
         } else if (args[0] == "stop") {
           Tone.Transport.cancel();
-        } else if (args[0] == "reset") {
-           reset()
-           }
+        }
+        else if (args[0] == "reset") { reset() }
+<!--        else if (args[0] == "stop1") { synthPart0.stop() }-->
+<!--        else if (args[0] == "start1") { synthPart0.start() }-->
+
 
       })
 

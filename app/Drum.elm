@@ -7,6 +7,7 @@ port module Drum exposing (main)
 -}
 
 import Browser
+import Color
 import DrumSongs
 import Element exposing (..)
 import Element.Background as Background
@@ -151,26 +152,36 @@ update msg model =
 
         MuteVoice1 ->
             ( { model
-                | voices =
+                | appState = Stopped
+                , voices =
                     if List.member Voice1 model.voices then
                         List.filter (\v -> v /= Voice1) model.voices
 
                     else
                         Voice1 :: model.voices
               }
-            , Cmd.none
+            , if List.member Voice1 model.voices then
+                sendCommand "stop:now"
+
+              else
+                sendCommand "nada"
             )
 
         MuteVoice2 ->
             ( { model
-                | voices =
+                | appState = Stopped
+                , voices =
                     if List.member Voice2 model.voices then
                         List.filter (\v -> v /= Voice2) model.voices
 
                     else
                         Voice2 :: model.voices
               }
-            , Cmd.none
+            , if List.member Voice2 model.voices then
+                sendCommand "stop:now"
+
+              else
+                sendCommand "nada"
             )
 
         ReadVoice1 str ->
@@ -263,11 +274,16 @@ update msg model =
 --
 -- VIEW
 --
+-- COLORS
 
 
 view : Model -> Html Msg
 view model =
-    Element.layoutWith { options = [ Element.focusStyle noFocus ] } [ Background.color (rgb255 40 40 40) ] (mainColumn model)
+    Element.layoutWith { options = [ Element.focusStyle noFocus ] }
+        [ Background.color Color.windowBGColor
+        , Font.color (Element.rgb 1 1 1)
+        ]
+        (mainColumn model)
 
 
 mainColumn : Model -> Element Msg
@@ -279,9 +295,9 @@ mainColumn model =
             , readVoice2 model
             , displayPeriod model
             , appButtons model
-            , newTabLink [ centerX, Font.size 12 ]
+            , newTabLink [ alignLeft, Font.size 12, paddingXY 18 0 ]
                 { url = "https://jxxcarlson.io/posts/2019-06-29-drum-language/"
-                , label = el [ Font.size 14, Font.color <| Element.rgb 0 0 1 ] (text "Article")
+                , label = el [ Font.size 14, Font.underline, Font.color <| Element.rgb 1 1 1 ] (text "Article")
                 }
             ]
         ]
@@ -332,13 +348,7 @@ readVoice1 : Model -> Element Msg
 readVoice1 model =
     column [ spacing 8 ]
         [ row [ Element.spacing 12 ] [ el [ Font.bold, Font.size 14 ] (text <| "Voice 1"), muteVoice1 model ]
-        , Input.multiline
-            [ width (px 700)
-            , height (px 200)
-            , Background.color (Element.rgb255 230 230 235)
-            , Border.width 1
-            , Border.color (rgb255 0 0 0)
-            ]
+        , Input.multiline multilineInputStyle
             { onChange = ReadVoice1
             , text = model.voice1String
             , placeholder = Nothing
@@ -349,17 +359,22 @@ readVoice1 model =
         ]
 
 
+multilineInputStyle =
+    [ width (px 700)
+    , height (px 180)
+    , Font.size 14
+    , Font.color (rgb255 0 0 0)
+    , Background.color (rgb 1 1 1)
+    , Border.width 1
+    , Border.color (rgb255 0 0 0)
+    ]
+
+
 readVoice2 : Model -> Element Msg
 readVoice2 model =
     column [ spacing 8 ]
         [ row [ Element.spacing 12 ] [ el [ Font.bold, Font.size 14 ] (text <| "Voice 2"), muteVoice2 model ]
-        , Input.multiline
-            [ width (px 700)
-            , height (px 200)
-            , Background.color (Element.rgb255 230 230 235)
-            , Border.width 1
-            , Border.color (rgb255 0 0 0)
-            ]
+        , Input.multiline multilineInputStyle
             { onChange = ReadVoice2
             , text = model.voice2String
             , placeholder = Nothing
@@ -372,11 +387,11 @@ readVoice2 model =
 
 inputBPM : Model -> Element Msg
 inputBPM model =
-    Input.text [ width (px 60) ]
+    Input.text [ width (px 60), height (px 35), Font.size 16, Font.color Color.inputText ]
         { onChange = InputBPM
         , text = model.bpmString
         , placeholder = Nothing
-        , label = Input.labelLeft [] <| el [ moveDown 13, paddingXY 4 0 ] (text "BPM")
+        , label = Input.labelLeft [ Font.color Color.text ] <| el [ moveDown 10, paddingXY 4 0 ] (text "BPM")
         }
 
 
@@ -493,31 +508,39 @@ tempoButton =
 mainColumnStyle =
     [ centerX
     , centerY
-    , Background.color (rgb255 180 180 190)
+    , Background.color Color.appBGColor
+    , Font.color Color.buttonText
+    , appBorder
+    , Border.width 1
     , width (px 800)
-    , paddingXY 20 20
+    , paddingXY 40 40
+    , Font.color (rgb255 255 255 255)
     ]
 
 
 buttonStyle =
-    [ Background.color (rgb255 80 80 80)
-    , Font.color (rgb255 255 255 255)
+    [ Background.color Color.buttonBGColor
+    , Font.color Color.text
+    , Font.color Color.buttonText
+    , largeButtonBorder
     , Font.size 16
     , paddingXY 15 8
     ]
 
 
 buttonStyleSelected =
-    [ Background.color (rgb255 140 30 30)
-    , Font.color (rgb255 255 255 255)
+    [ Background.color Color.red
+    , Font.color Color.buttonText
+    , largeButtonBorder
     , Font.size 16
     , paddingXY 15 8
     ]
 
 
 buttonStyleSmall =
-    [ Background.color (rgb255 80 80 80)
-    , Font.color (rgb255 255 255 255)
+    [ Background.color Color.buttonBGColor
+    , Font.color Color.buttonText
+    , smallButtonBorder
     , Font.size 12
     , paddingXY 4 2
     ]
@@ -525,7 +548,20 @@ buttonStyleSmall =
 
 buttonStyleSelectedSmall =
     [ Background.color (rgb255 140 30 30)
-    , Font.color (rgb255 255 255 255)
+    , Font.color Color.buttonText
+    , smallButtonBorder
     , Font.size 12
     , paddingXY 4 2
     ]
+
+
+smallButtonBorder =
+    Border.rounded 4
+
+
+largeButtonBorder =
+    Border.rounded 12
+
+
+appBorder =
+    Border.rounded 24
