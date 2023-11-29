@@ -246,7 +246,7 @@ update msg model =
                 let
                     noteList1 : List String
                     noteList1 =
-                        Phoneme.toPitchNameList model.voice1String
+                        Phoneme.toPitchNameListTransposeOctave -1 model.voice1String
 
                     noteList2 =
                         Phoneme.toPitchNameList model.voice2String

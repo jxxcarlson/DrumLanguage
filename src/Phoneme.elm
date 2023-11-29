@@ -4,6 +4,7 @@ module Phoneme exposing
     , primitiveOfPhonemeClass1
     , stringOfPhonemeClass
     , toPitchNameList
+    , toPitchNameListTransposeOctave
     )
 
 import Duration exposing (..)
@@ -34,6 +35,18 @@ toPitchNameList str =
         |> List.map phonemeClassOfString
         |> List.filter (\s -> s /= Unknown)
         |> List.map primitiveOfPhonemeClass3
+        |> List.map stringOfPrimitive
+
+
+toPitchNameListTransposeOctave : Int -> String -> List String
+toPitchNameListTransposeOctave octaveDelta str =
+    str
+        |> String.toLower
+        |> String.split ""
+        |> List.map phonemeClassOfString
+        |> List.filter (\s -> s /= Unknown)
+        |> List.map primitiveOfPhonemeClass3
+        |> List.map (\p -> Primitive.tranposeOctavePrimitivePitch octaveDelta p)
         |> List.map stringOfPrimitive
 
 

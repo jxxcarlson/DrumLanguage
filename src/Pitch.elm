@@ -4,6 +4,7 @@ module Pitch exposing
     , PitchClass(..)
     , stringOfPitch
     , tjsStringOfPitch
+    , transposeOctave
     )
 
 
@@ -51,6 +52,11 @@ type alias Octave =
 
 type alias Pitch =
     ( PitchClass, Octave )
+
+
+transposeOctave : Int -> Pitch -> Pitch
+transposeOctave k ( pitchclass, octave ) =
+    ( pitchclass, octave + k )
 
 
 type alias AbsPitch =

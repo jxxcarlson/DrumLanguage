@@ -1,4 +1,4 @@
-module Primitive exposing (Primitive(..), duration, stringOfPrimitive)
+module Primitive exposing (Primitive(..), duration, stringOfPrimitive, tranposeOctavePrimitivePitch)
 
 import Duration exposing (..)
 import Pitch exposing (Pitch, stringOfPitch)
@@ -29,3 +29,13 @@ stringOfPrimitive primitive =
 
         Rest dur ->
             "Rest"
+
+
+tranposeOctavePrimitivePitch : Int -> Primitive Pitch -> Primitive Pitch
+tranposeOctavePrimitivePitch octave primitive =
+    case primitive of
+        Note dur pitch ->
+            Note dur (Pitch.transposeOctave octave pitch)
+
+        Rest dur ->
+            Rest dur
